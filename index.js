@@ -8,9 +8,24 @@ const consign = require('consign');
 consign().include('controllers').into(app);
 
 
+const fs = require("fs");
+const directories = ["utils"];
+directories.forEach(dir => {
+    try {
+        const files = fs.readdirSync(dir);
+        files.forEach(function (file) {
+            const Class = require(`./${dir}/${file}`);
+            global[file.split(".")[0]] = Class;
+        });
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+
 app.listen(3333, () => {
-    for (let index = 0; index < 10; index++) console.log()
+    console.log("--------------------------------------------");
+    for (let index = 0; index < 10; index++) console.log("\n");
     console.clear();
-    console.log("---------------------------")
     console.log("Rodando na porta 3333");
 });
