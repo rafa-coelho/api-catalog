@@ -1,15 +1,16 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-
+const expressValidator = require("express-validator");
 
 app.use(express.json());
 app.use(cors());
+app.use(expressValidator());
+
+
 
 global.HOST_SDM = "https://dessdm-por.sonda.com:8080/axis/services/USD_R11_WebService";
 const consign = require('consign');
-consign().include('controllers').into(app);
-
 
 const fs = require("fs");
 const directories = ["utils", "classes"];
@@ -25,6 +26,7 @@ directories.forEach(dir => {
     }
 });
 
+consign().include('controllers').into(app);
 
 app.listen(3333, () => {
     console.log("--------------------------------------------");
@@ -32,3 +34,4 @@ app.listen(3333, () => {
     console.clear();
     console.log("Rodando na porta 3333");
 });
+
