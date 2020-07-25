@@ -1,5 +1,3 @@
-const Offering = require("../classes/Offering");
-
 module.exports = (app) => {
 
     // [POST] => /offering
@@ -54,7 +52,7 @@ module.exports = (app) => {
                     }
 
                 });
-                
+
                 return field;
             })
         };
@@ -78,7 +76,7 @@ module.exports = (app) => {
                 id: Util.generateId(),
                 offering: data.id,
                 ...field
-            });           
+            });
         });
 
         resp.status = 1;
