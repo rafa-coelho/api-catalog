@@ -3,7 +3,7 @@ const app = express();
 
 app.use(express.json())
 
-global.HOST_SDM = "https://sdm17.sondait.com.br:8080/axis/services/USD_R11_WebService";
+global.HOST_SDM = "https://dessdm-por.sonda.com:8080/axis/services/USD_R11_WebService";
 const consign = require('consign');
 consign().include('controllers').into(app);
 
