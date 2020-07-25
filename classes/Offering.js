@@ -1,9 +1,7 @@
-const Classes = require("../utils/Classes");
-
 class Offering extends Classes{
 
     static table = 'offering';
-    static fields = [ 'id', 'name', 'label', 'multiple', 'type' ];
+    static fields = [ 'id', 'name', 'external_id', 'deleted' ];
 
 }
 
