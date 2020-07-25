@@ -90,4 +90,38 @@ module.exports = (app) => {
         res.send(resp);
     });
 
+    app.get('/DomainType/:id', async (req, res) => {
+        const { headers, params } = req;
+        const resp = {
+            data: null,
+            msg: "",
+            status: 0,
+            errors: []
+        };
+
+        if(!headers['authorization'] || !Number(headers['authorization'])){
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: "A Session ID precisa ser informada!"
+            });
+            return res.status(403).send(resp);
+        }
+
+        // TODO: Session verification        
+        const sid = headers['authorization'];
+
+        const type = await DomainType.GetFirst(`id = '${params.id}'`);
+
+        if(!type){
+            resp.errors.push({
+                msg: "Tipo de Domínio não encontrado"
+            });
+            return res.status(404).send(resp);
+        }
+
+        resp.data = type;
+        resp.status = 1;
+        res.send(resp);
+    });
 };
