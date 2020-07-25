@@ -1,5 +1,3 @@
-const DomainValue = require("../classes/DomainValue");
-
 module.exports = (app) => {
 
     app.post('/DomainValue', async (req, res) => {
