@@ -9,7 +9,7 @@ consign().include('controllers').into(app);
 
 
 const fs = require("fs");
-const directories = ["utils"];
+const directories = ["utils", "classes"];
 directories.forEach(dir => {
     try {
         const files = fs.readdirSync(dir);
