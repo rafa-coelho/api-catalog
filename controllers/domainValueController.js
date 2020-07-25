@@ -84,4 +84,36 @@ module.exports = (app) => {
         res.send(resp);
     });
 
+    app.get('/DomainValue', async (req, res) => {
+        const { headers, query } = req;
+        const resp = {
+            data: null,
+            msg: "",
+            status: 0,
+            errors: []
+        };
+
+        if(!headers['authorization'] || !Number(headers['authorization'])){
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: "A Session ID precisa ser informada!"
+            });
+            return res.status(403).send(resp);
+        }
+
+        // TODO: Session verification     
+        const sid = headers['authorization'];
+
+        const where = (query.where) ? query.where : "";
+        const order_by = (query.order_by) ? query.order_by : "";
+        const limit = (query.limit) ? query.limit : "";
+
+        const values = await DomainValue.Get(where, order_by, limit);
+
+        resp.data = values;
+        resp.status = 1;
+        res.send(resp);
+    });
+
 };
