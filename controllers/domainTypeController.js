@@ -185,6 +185,6 @@ module.exports = (app) => {
         resp.data = type;
         resp.status = 1;
         res.send(resp);
-    });    
+    });
 
 };

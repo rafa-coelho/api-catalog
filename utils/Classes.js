@@ -59,7 +59,7 @@ class Classes
     static async Delete(where){
         const db = new DB(this.table);
 
-        if(this.fields.includes("excluido")){
+        if(this.fields.includes("deleted")){
             db.excluido = 1;
             db.Where(where);
     
