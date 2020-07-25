@@ -196,4 +196,39 @@ module.exports = (app) => {
         res.send(resp);
     });
 
+    app.get('/DomainValue/:id', async (req, res) => {
+        const { headers, params, query } = req;
+        const resp = {
+            data: null,
+            msg: "",
+            status: 0,
+            errors: []
+        };
+
+        if(!headers['authorization'] || !Number(headers['authorization'])){
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: "A Session ID precisa ser informada!"
+            });
+            return res.status(403).send(resp);
+        }
+
+        // TODO: Session verification     
+        const sid = headers['authorization'];
+
+        const value = await DomainValue.GetFirst(`id = '${params.id}'`);
+
+        if(!value){
+            resp.errors.push({
+                msg: "Valor não encontrado!"
+            });
+            return res.status(404).send(resp);
+        }
+
+        resp.status = 1;
+        resp.data = value;
+        res.send(resp);
+    });
+
 };
