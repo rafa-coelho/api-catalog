@@ -156,4 +156,44 @@ module.exports = (app) => {
         res.send(resp);
     });
 
+    app.get('/DomainValue/Parent/:parent', async (req, res) => {
+        const { headers, params, query } = req;
+        const resp = {
+            data: null,
+            msg: "",
+            status: 0,
+            errors: []
+        };
+
+        if(!headers['authorization'] || !Number(headers['authorization'])){
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: "A Session ID precisa ser informada!"
+            });
+            return res.status(403).send(resp);
+        }
+
+        // TODO: Session verification     
+        const sid = headers['authorization'];
+
+        const parent = await DomainValue.GetFirst(`id = '${params.parent}'`);
+
+        if(!parent){
+            resp.errors.push({
+                msg: "Valor pai não encontrado!"
+            });
+            return res.status(404).send(resp);
+        }
+
+        const order_by = (query.order_by) ? query.order_by : "";
+        const limit = (query.limit) ? query.limit : "";
+
+        const values = await DomainValue.Get(`parent = '${params.parent}'`, order_by, limit);
+
+        resp.data = values;
+        resp.status = 1;
+        res.send(resp);
+    });
+
 };
