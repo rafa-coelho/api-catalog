@@ -4,7 +4,7 @@ const con = db.createPool({
     host:  "127.0.0.1",
     user: "root",
     password: "",
-    database: "catalogui"
+    database: "catalog"
 });
 
 class DB
