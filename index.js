@@ -1,7 +1,10 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 
-app.use(express.json())
+
+app.use(express.json());
+app.use(cors());
 
 global.HOST_SDM = "https://dessdm-por.sonda.com:8080/axis/services/USD_R11_WebService";
 const consign = require('consign');
