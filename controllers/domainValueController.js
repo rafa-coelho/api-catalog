@@ -231,4 +231,66 @@ module.exports = (app) => {
         res.send(resp);
     });
 
+    app.put('/DomainValue/:id', async (req, res) => {
+        const { headers, params, body } = req;
+        const resp = {
+            data: null,
+            msg: "",
+            status: 0,
+            errors: []
+        };
+
+        if(!headers['authorization'] || !Number(headers['authorization'])){
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: "A Session ID precisa ser informada!"
+            });
+            return res.status(403).send(resp);
+        }
+
+        // TODO: Session verification     
+        const sid = headers['authorization'];
+
+        const value = await DomainValue.GetFirst(`id = '${params.id}'`);
+
+        if(!value){
+            resp.errors.push({
+                msg: "Valor não encontrado!"
+            });
+            return res.status(404).send(resp);
+        }
+
+        const data = {};
+        let edit = false;
+        const proibidos = [ "id" ];
+        DomainValue.fields.forEach(campo => {
+            if(body[campo] !== undefined && !proibidos.includes(campo)){
+                data[campo] = body[campo];
+                value[campo] = body[campo];
+                edit = true;
+            }
+        });
+
+        if(!edit){
+            resp.errors.push({
+                msg: "Nada para editar"
+            });
+            return res.status(400).send(resp);
+        }
+
+        const update = await DomainValue.Update(data, `id = '${params.id}'`);
+        if(update.status !== 1){
+            resp.errors.push({
+                msg: "Erro ao atualizar!"
+            });
+            return res.status(500).send(resp);
+        }
+
+        resp.data = value;
+        resp.status = 1;
+        resp.msg = "Valor atualizado com sucesso!";
+        res.send(resp);
+    });
+
 };
