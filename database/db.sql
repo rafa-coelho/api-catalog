@@ -39,6 +39,13 @@ CREATE TABLE `offering_field` (
   `type` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `offering_field_option` (
+  `id` varchar(45) NOT NULL,
+  `field` varchar(45) NOT NULL,
+  `label` varchar(50) NOT NULL,
+  `value` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 ALTER TABLE `offering`
   ADD PRIMARY KEY (`id`);
@@ -46,4 +53,9 @@ ALTER TABLE `offering`
 
 ALTER TABLE `offering_field`
   ADD PRIMARY KEY (`id`);
+
+
+ALTER TABLE `offering_field_option`
+  ADD PRIMARY KEY (`id`);
+
 COMMIT;
