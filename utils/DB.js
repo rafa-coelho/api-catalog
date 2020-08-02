@@ -1,14 +1,4 @@
 const knex = require('../database/connection');
-const db = require("mysql");
-const { off, whereRaw } = require('../database/connection');
-
-
-const con = db.createPool({
-    host:  "127.0.0.1",
-    user: "root",
-    password: "",
-    database: "catalog"
-});
 
 class DB
 {
