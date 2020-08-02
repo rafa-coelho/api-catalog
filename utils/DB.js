@@ -49,35 +49,23 @@ class DB
         return data;
     }
     
-    Insert(callback){
-        return new Promise(resolve => {
-            let fields = "(";
-            let values = "(";
-            
-            let c = 0;
-            for(let param in this){
-                const key = param;
-                const value = Util.mysql_real_escape_string(this[param]);
-                c++;
-                
-                const ignore = [ "table", "where", "db" ];
-                
-                if(typeof(value) == "function" || ignore.includes(key))
-                    continue;
-        
-                fields += key + ((c < Util.objCount(this)) ? ", " : ")");
-                values += "'" + value + "'" + ((c < Util.objCount(this)) ? ", " : ")");
-            }
-            
-            const query = "INSERT INTO `" + this.table + "` " + fields + " VALUES " + values;
-            
-            con.query(query, function(err, res){
-                if(typeof callback == "function")
-                    callback(res);
-                resolve(res);
-            });
+    async Insert(callback){
 
-        });
+        const obj = {};
+
+        for (const param in this) {
+            if (this.hasOwnProperty(param)) {
+                const ignore = [ "table", "where", "db" ];
+
+                const field = this[param];
+                if(typeof(field) == "function" || ignore.includes(param))
+                    continue;
+                
+                obj[param] = field;
+            }
+        }
+
+        return await knex(this.table).returning('id').insert(obj);
     }
     
     Update(callback){
