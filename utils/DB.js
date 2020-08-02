@@ -92,26 +92,17 @@ class DB
     async Delete(){
         const where = (this.where != "" && this.where != undefined) ? this.where : "";
 
-
         return await knex(this.table)
             .whereRaw(where)
             .del();
-    }
-    
-    Inner(tabela, campo){
-        this.inner = " LEFT JOIN " + tabela + " ON " + this.table + "." + campo + " = " + tabela + ".id ";
     }
 
     OrderBy(order_by){
         this.order_by = order_by;
     }
 
-    Query(query){
-        return new Promise(resolve => {
-            con.query(query, (err, result) => {
-                resolve(result);
-            });
-        })
+    async Query(query){
+        return await knex.raw(query);
     }
 
 }
