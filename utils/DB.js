@@ -26,10 +26,10 @@ class DB
     }
     
     
-    async Get(callback){
+    async Get(){
         const where = (this.where != "" && this.where != undefined) ? this.where : "";
         const order_by = (this.order_by) ? this.order_by : "id desc";
-        let limit = (this._limit) ? this._limit : null;
+        let limit = (this._limit) ? this._limit : 1000000;
         let offset = (this._offset) ? this._offset : 0;
 
         
@@ -49,8 +49,7 @@ class DB
         return data;
     }
     
-    async Insert(callback){
-
+    async Insert(){
         const obj = {};
 
         for (const param in this) {
@@ -68,32 +67,26 @@ class DB
         return await knex(this.table).returning('id').insert(obj);
     }
     
-    Update(callback){
-        return new Promise(resolve => {
-            let fields = "";
-            let c = 1;
-            for(let param in this){
-                const key = param;
-                const value = Util.mysql_real_escape_string(this[param]);
-                c++;
-                
+    async Update(callback){
+        const where = (this.where != "" && this.where != undefined) ? this.where : "";
+
+        const obj = {};
+
+        for (const param in this) {
+            if (this.hasOwnProperty(param)) {
                 const ignore = [ "table", "where", "db" ];
-                if(typeof(value) == "function" || ignore.includes(key))
+
+                const field = this[param];
+                if(typeof(field) == "function" || ignore.includes(param))
                     continue;
-
-                fields += key + " = '" + value + "'" + ((c < Util.objCount(this)) ? ", " : "");
+                
+                obj[param] = field;
             }
-        
-            const where = (this.where != "" && this.where != undefined) ? " WHERE " + this.where : "";
-            const query = "UPDATE `" + this.table + "` SET " + fields + where;
-            
-            con.query(query, function(err, res){ 
-                if(typeof callback == "function")
-                    callback(res);
-                resolve(res);
-            });
+        }
 
-        });
+        return await knex(this.table)
+            .whereRaw(where)
+            .update(obj);
     }
     
     Delete(callback){
