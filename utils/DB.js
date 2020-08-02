@@ -89,15 +89,13 @@ class DB
             .update(obj);
     }
     
-    Delete(callback){
-        return new Promise(resolve => {
-            const where = (this.where != "" && this.where != undefined) ? " WHERE " + this.where : "";
-            con.query("DELETE FROM " + this.table + where, function(err, result){ 
-                if(typeof callback == "function")
-                    callback(result);
-                resolve(result);
-            });
-        });
+    async Delete(){
+        const where = (this.where != "" && this.where != undefined) ? this.where : "";
+
+
+        return await knex(this.table)
+            .whereRaw(where)
+            .del();
     }
     
     Inner(tabela, campo){
