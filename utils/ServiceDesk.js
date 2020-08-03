@@ -29,7 +29,7 @@ class ServiceDesk
                 headers:{ 'SOAPAction': 'http://www.ca.com/UnicenterServicePlus/ServiceDesk/login' }
             });
 
-            const sid = (/<loginReturn xmlns="">(.*?)<\/loginReturn>/g).exec(post.data)[1];
+            const sid = Util.xPath('//loginReturn', e.response.data)[0];
             
             if(Number(sid)){
                resp.data = sid;
