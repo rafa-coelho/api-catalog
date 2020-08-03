@@ -260,6 +260,31 @@ class Util{
         return ` ${date.getDate() + "/" + ("00" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear()} às ${date.getHours()}:${("00" + date.getMinutes()).slice(-2) }`;
     };
 
+    static xmlToJson(xml){
+        const xml2js = require('xml2js');
+        
+        return new Promise((resolve, reject) => {
+            xml2js.parseString(xml, (err, result) => {
+                if(err) {
+                    reject(err);
+                }
+            
+                const json = result;
+                resolve(json);
+            });
+        });
+    }
+
+    static xPath(path, xml)
+    {
+        const xpath = require('xpath'), dom = require('xmldom').DOMParser;
+
+        const doc = new dom().parseFromString(xml)
+        const nodes = xpath.select(path, doc);
+
+        return nodes.map(x => x.firstChild.data);
+    }
+
 }
 
 module.exports = Util;
