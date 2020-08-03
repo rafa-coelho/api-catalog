@@ -1,11 +1,4 @@
-const db = require("mysql");
-
-const con = db.createPool({
-    host:  "127.0.0.1",
-    user: "root",
-    password: "",
-    database: "catalog"
-});
+const knex = require('../database/connection');
 
 class DB
 {
@@ -23,103 +16,83 @@ class DB
     }
     
     
-    Get(callback){
-        return new Promise(resolve => {
-            const where = (this.where != "" && this.where != undefined) ? " WHERE " + this.where : "";
-            const order_by = (this.order_by) ? " ORDER BY " + this.order_by : "";
-            const limit = (this._limit) ? " LIMIT " + this._limit : "";
-            con.query("SELECT * FROM " + this.table + where + order_by + limit, (err, result) => {
-                if(typeof callback == "function")
-                    callback(result);
-                resolve(result);
-            });
-        });
-    }
-    
-    Insert(callback){
-        return new Promise(resolve => {
-            let fields = "(";
-            let values = "(";
-            
-            let c = 0;
-            for(let param in this){
-                const key = param;
-                const value = Util.mysql_real_escape_string(this[param]);
-                c++;
-                
-                const ignore = [ "table", "where", "db" ];
-                
-                if(typeof(value) == "function" || ignore.includes(key))
-                    continue;
+    async Get(){
+        const where = (this.where != "" && this.where != undefined) ? this.where : "";
+        const order_by = (this.order_by) ? this.order_by : "id desc";
+        let limit = (this._limit) ? this._limit : 1000000;
+        let offset = (this._offset) ? this._offset : 0;
+
         
-                fields += key + ((c < Util.objCount(this)) ? ", " : ")");
-                values += "'" + value + "'" + ((c < Util.objCount(this)) ? ", " : ")");
+        if(limit){
+            if(limit.toString().indexOf(',') >= 0){
+                offset = limit.split(',')[0].replace(/\D+/g, '')
+                limit = limit.split(',')[1].replace(/\D+/g, '')
             }
-            
-            const query = "INSERT INTO `" + this.table + "` " + fields + " VALUES " + values;
-            
-            con.query(query, function(err, res){
-                if(typeof callback == "function")
-                    callback(res);
-                resolve(res);
-            });
+        }
 
-        });
+        const data = await knex(this.table)
+            .whereRaw(where)
+            .orderByRaw(order_by)
+            .limit(limit)
+            .offset(offset);
+
+        return data;
     }
     
-    Update(callback){
-        return new Promise(resolve => {
-            let fields = "";
-            let c = 1;
-            for(let param in this){
-                const key = param;
-                const value = Util.mysql_real_escape_string(this[param]);
-                c++;
-                
+    async Insert(){
+        const obj = {};
+
+        for (const param in this) {
+            if (this.hasOwnProperty(param)) {
                 const ignore = [ "table", "where", "db" ];
-                if(typeof(value) == "function" || ignore.includes(key))
+
+                const field = this[param];
+                if(typeof(field) == "function" || ignore.includes(param))
                     continue;
-
-                fields += key + " = '" + value + "'" + ((c < Util.objCount(this)) ? ", " : "");
+                
+                obj[param] = field;
             }
-        
-            const where = (this.where != "" && this.where != undefined) ? " WHERE " + this.where : "";
-            const query = "UPDATE `" + this.table + "` SET " + fields + where;
-            
-            con.query(query, function(err, res){ 
-                if(typeof callback == "function")
-                    callback(res);
-                resolve(res);
-            });
+        }
 
-        });
+        return await knex(this.table).returning('id').insert(obj);
     }
     
-    Delete(callback){
-        return new Promise(resolve => {
-            const where = (this.where != "" && this.where != undefined) ? " WHERE " + this.where : "";
-            con.query("DELETE FROM " + this.table + where, function(err, result){ 
-                if(typeof callback == "function")
-                    callback(result);
-                resolve(result);
-            });
-        });
+    async Update(callback){
+        const where = (this.where != "" && this.where != undefined) ? this.where : "";
+
+        const obj = {};
+
+        for (const param in this) {
+            if (this.hasOwnProperty(param)) {
+                const ignore = [ "table", "where", "db" ];
+
+                const field = this[param];
+                if(typeof(field) == "function" || ignore.includes(param))
+                    continue;
+                
+                obj[param] = field;
+            }
+        }
+
+        return await knex(this.table)
+            .whereRaw(where)
+            .update(obj);
     }
     
-    Inner(tabela, campo){
-        this.inner = " LEFT JOIN " + tabela + " ON " + this.table + "." + campo + " = " + tabela + ".id ";
+    async Delete(){
+        const where = (this.where != "" && this.where != undefined) ? this.where : "";
+
+        return await knex(this.table)
+            .whereRaw(where)
+            .del();
     }
 
     OrderBy(order_by){
         this.order_by = order_by;
     }
 
-    Query(query){
-        return new Promise(resolve => {
-            con.query(query, (err, result) => {
-                resolve(result);
-            });
-        })
+    async Query(query){
+        return await knex.raw(query);
     }
 
 }
