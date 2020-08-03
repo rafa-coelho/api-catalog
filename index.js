@@ -9,6 +9,7 @@ app.use(expressValidator());
 
 
 
+global.PROD = process.env.NODE_ENV === 'prod'
 global.HOST_SDM = "https://dessdm-por.sonda.com:8080/axis/services/USD_R11_WebService";
 const consign = require('consign');
 

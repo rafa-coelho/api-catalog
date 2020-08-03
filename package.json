@@ -19,11 +19,14 @@
     "nodemon": "^2.0.4"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "knex:migrate": "knex --knexfile knexfile.js migrate:latest",
-    "knex:seed": "knex --knexfile knexfile.ts seed:run"
+    "knex:migrate": "knex --knexfile knexfile.js migrate:latest --env production",
+    "knex:seed": "knex --knexfile knexfile.ts seed:run --env production",
+    "knex:rollback": "knex --knexfile knexfile.js migrate:rollback --env production",
+    "knex:migrate-dev": "knex --knexfile knexfile.js migrate:latest --env development",
+    "knex:seed-dev": "knex --knexfile knexfile.ts seed:run --env development",
+    "knex:rollback-dev": "knex --knexfile knexfile.js migrate:rollback --env development"
   },
   "author": "",
   "license": "ISC"
