@@ -1,2 +1,5 @@
+const knex = require('knex');
+const path = require('path');
+
 const connection = require('../knexfile');
-module.exports = connection[PROD ? 'preduction' : 'development'];
+module.exports = knex(connection[PROD ? 'preduction' : 'development']);
