@@ -48,6 +48,11 @@ class ServiceDesk
             status: 0
         };
 
+        if(!Number(session_id)){
+            resp.msg = 'A session_id precisa ser um número!';
+            return resp;
+        }
+
         let xml = '';
         xml += `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://www.ca.com/UnicenterServicePlus/ServiceDesk">`;
         xml += `   <soapenv:Header/>`;
