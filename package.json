@@ -25,12 +25,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "migrate": "knex --knexfile knexfile.js migrate:latest --env production",
-    "seed": "knex --knexfile knexfile.ts seed:run --env production",
-    "rollback": "knex --knexfile knexfile.js migrate:rollback --env production",
-    "migrate-dev": "knex --knexfile knexfile.js migrate:latest --env development",
-    "seed-dev": "knex --knexfile knexfile.ts seed:run --env development",
-    "rollback-dev": "knex --knexfile knexfile.js migrate:rollback --env development"
+    "migrate": "node ./database/migrate.js",
+    "rollback": "node ./database/rollback.js",
+    "seed": "knex --knexfile knexfile.ts seed:run --env production"
   },
   "author": "",
   "license": "ISC"
