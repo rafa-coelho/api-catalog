@@ -54,7 +54,7 @@ class DB
             }
         }
 
-        return await knex(this.table).returning('id').insert(obj);
+        return await knex(this.table).insert(obj);
     }
     
     async Update(callback){
