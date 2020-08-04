@@ -31,15 +31,13 @@ const migrate = async () => {
         const migration = require(`${migrationsDir}/${file}`);
         let error = false;
         try{
-            await migration.up(knex);
+            await migration.up(knex, PROD);
         }catch(E){
-            if(E.toString().indexOf('Knex only supports collate statement with mysql.') < 0){
-                error = true;
-                console.log(E);
-            }
+            error = true;
+            console.log(E);
         }
         if(!error){
-            // console.log(`Runned ${file} successfully!`);
+            console.log(`Runned ${file} successfully!`);
         }
     }
 
