@@ -1,6 +1,7 @@
-exports.up = async function(knex) {
+exports.up = async function(knex, utf8 = false) {
     return knex.schema.createTable("user", table => {
-        table.collate('utf8_unicode_ci');
+        if(utf8)
+            table.collate('utf8_unicode_ci');
         table.string('id', 45).primary();
         table.string('external_id', 80).notNullable();
         table.string('name', 80).notNullable();
