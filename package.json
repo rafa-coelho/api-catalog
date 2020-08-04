@@ -26,10 +26,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "migrate": "node ./database/migrate.js",
-    "rollback": "knex --knexfile knexfile.js migrate:rollback --env production",
+    "rollback": "node ./database/rollback.js",
     "seed": "knex --knexfile knexfile.ts seed:run --env production",
-    "seed-dev": "knex --knexfile knexfile.ts seed:run --env development",
-    "rollback-dev": "knex --knexfile knexfile.js migrate:rollback --env development"
   },
   "author": "",
   "license": "ISC"
