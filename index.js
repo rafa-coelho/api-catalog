@@ -34,11 +34,5 @@ app.listen(3333, () => {
     for (let index = 0; index < 10; index++) console.log("\n");
     console.clear();
     console.log("Rodando na porta 3333");
-
-    const enc = Crypto.Encrypt("Rafael", 'abobora');
-    const dec = Crypto.Decrypt(enc, 'abobora');
-
-    console.log(enc);
-    console.log(dec);
 });
 
