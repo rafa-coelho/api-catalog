@@ -9,9 +9,10 @@ module.exports = (app) => {
 
         // Default response
         const resp = {
-            data: null,
+            status: 0,
             msg:"",
-            status: 0
+            data: null,
+            errors: []
         };
 
         const { body } = req;
@@ -29,7 +30,8 @@ module.exports = (app) => {
         }
 
         const usernameExists = await User.GetFirst(`username = '${body.username}'`);
-        
+        let userid = '';
+
         if(!usernameExists){
             const login = await ServiceDesk.Login(body.username, body.password);
             
@@ -65,13 +67,11 @@ module.exports = (app) => {
                 await User.Create(user);
             }
 
-            
-
-            resp.status = 1;
-            resp.data = login.data;
+            userid = user.id;
         }else{
+            userid = usernameExists.id;
 
-            if(usernameExists.password !== Crypto.Encrypt(body.password, usernameExists.id)){
+            if(Crypto.Decrypt(usernameExists.password, usernameExists.id) !== body.password){
                 resp.errors.push({
                     msg: "Senha incorreta!"
                 });
@@ -85,19 +85,27 @@ module.exports = (app) => {
                 });
                 return res.status(401).send(resp);
             }
-
-            
-            
         }
         
         // TODO: Verify if SDM password has changed
-        await Session.Create({
-            id: Util.generateId(),
-            
-            
-        });
-
         
+        const session = {
+            id: Util.generateId(),
+            user: userid
+        }
+
+        const createSession = await Session.Create(session);
+
+        if(createSession.status !== 1){
+            resp.errors.push({
+                msg: "Erro ao gerar sessão"
+            });
+            return res.status(500).send(resp);
+        }
+
+        resp.status = 1;
+        resp.msg = "Login realizado com sucesso!";
+        resp.data = session.id;
         res.send(resp);
     });  
 
