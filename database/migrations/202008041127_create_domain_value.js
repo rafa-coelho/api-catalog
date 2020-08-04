@@ -1,10 +1,11 @@
-exports.up = async function(knex) {
+exports.up = async function(knex, utf8 = false) {
     return knex.schema.createTable("domain_value", table => {
-        table.collate('utf8_unicode_ci');
+        if(utf8)
+            table.collate('utf8_unicode_ci');
         table.string('id', 45).primary();
         table.string('name', 50).notNullable();
-        table.string('type', 45).notNullable();
-        table.string('parent', 45).notNullable();
+        table.string('type', 45);
+        table.string('parent', 45);
         table.boolean('deleted');
     });
 }

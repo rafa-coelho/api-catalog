@@ -34,7 +34,7 @@ class Classes
 
         return {
             status: (result) ? 1 : 0,
-            data: (result) ? result.insertId : null,
+            data: (result) ? result[0] : null,
             msg: (result) ? "Criado com sucesso!" : "Erro ao criar!"
         };
     }
