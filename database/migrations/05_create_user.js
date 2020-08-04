@@ -5,6 +5,7 @@ exports.up = async function(knex) {
         table.string('external_id', 80).notNullable();
         table.string('name', 80).notNullable();
         table.string('email', 80).notNullable();
+        table.string('username', 80).notNullable();
         table.string('password', 80).notNullable();
         table.string('access_type', 25).notNullable();
         table.string('status', 25).notNullable();
