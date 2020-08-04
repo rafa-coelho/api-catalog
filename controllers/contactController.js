@@ -4,44 +4,92 @@ const axios = require('axios').default;
 //Pegando o express
 module.exports = (app) => {
     //Endpoint login
-    app.post('/login', async (req,res) => {
+    app.post('/login', async (req, res) => {
+        const salt = 'CATALOG SALT';
 
-        //Error
-        const response = {
-            data: "",
+        // Default response
+        const resp = {
+            data: null,
             msg:"",
             status: 0
-        }
-        
-        const {body} = req;
-        let xml = '';
-        xml += `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://www.ca.com/UnicenterServicePlus/ServiceDesk">`;
-        xml += `   <soapenv:Header/>`;
-        xml += `   <soapenv:Body>`;
-        xml += `      <ser:login>`;
-        xml += `         <username>${body.username}</username>`;
-        xml += `         <password>${body.password}</password>`;
-        xml += `      </ser:login>`;
-        xml += `   </soapenv:Body>`;
-        xml += `</soapenv:Envelope>`;
-
-        try{
-            const post = await axios.post(HOST_SDM,xml,{headers:{'SOAPAction': 'http://www.ca.com/UnicenterServicePlus/ServiceDesk/login'}});
-
-            const sid = (/<loginReturn xmlns="">(.*?)<\/loginReturn>/g).exec(post.data)[1];
-            
-            if(Number(sid)){
-               response.data = sid;
-               response.msg = "Login feito com sucesso";
-               response.status = 1;
-            };
-        }catch(e){
-            response.msg = "Error ao fazer login";
-        }finally{
-            
-            res.send(response)
         };
-      
+
+        const { body } = req;
+
+        const obrigatorios = [ 'username', 'password' ];
+
+        obrigatorios.forEach(campo => {
+            req.assert(campo, `O campo '${campo}' é obrigatório!`).notEmpty();
+        });
+
+        resp.errors = req.validationErrors() || [];
+
+        if(resp.errors.length > 0){
+            return res.status(400).send(resp);
+        }
+
+        const userExists = await User.GetFirst(`username = '${body.username}'`);
+        
+        if(!userExists){
+            const login = await ServiceDesk.Login(body.username, body.password);
+            
+            if(login.status !== 1){
+                resp.errors.push({
+                    msg: 'Erro ao realizar login'
+                });
+                return res.status(401).send(resp);
+            }
+            
+            const contact = await ServiceDesk.GetContact(login.data, body.username);
+            
+            if(contact.status !== 1){
+                resp.errors.push({
+                    msh: "Erro ao encontrar usuário no Service Desk"
+                });
+                return res.status(500).send(resp);
+            }
+
+            const user = {
+                id: Util.generateId(),
+                ...contact.data
+            };
+
+            user.password = Crypto.Encrypt(body.password, user.id);
+
+            await User.Create(user);
+            await Session.Create({
+                id: Util.generateId(),
+                external_id: login.data
+                
+            });
+
+            resp.status = 1;
+            resp.data = login.data;
+        }else{
+
+            if(userExists.password !== Crypto.Encrypt(body.password, userExists.id)){
+                resp.errors.push({
+                    msg: "Senha incorreta!"
+                });
+                return res.status(401).send(resp);
+            }
+
+            const login = await ServiceDesk.Login(body.username, body.password);
+            if(login.status !== 1){
+                resp.errors.push({
+                    msg: 'Erro ao realizar login'
+                });
+                return res.status(401).send(resp);
+            }
+
+
+
+
+        }
+
+
+        
+        res.send(resp);
     });  
 
     //Endpoint logout
