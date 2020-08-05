@@ -5,7 +5,7 @@ exports.up = async function(knex, utf8 = false) {
         table.string('id', 45).primary();
         table.string('name', 50).notNullable();
         table.string('description', 200);
-        table.boolean('deleted');
+        table.integer('deleted').defaultTo(0);
     });
 }
 

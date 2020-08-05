@@ -10,7 +10,7 @@ exports.up = async function(knex, utf8 = false) {
         table.string('password', 80).notNullable();
         table.string('access_type', 25);
         table.string('status', 25);
-        table.boolean('deleted');
+        table.integer('deleted').defaultTo(0);
     });
 }
 

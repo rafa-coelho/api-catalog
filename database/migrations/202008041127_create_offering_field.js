@@ -6,9 +6,9 @@ exports.up = async function(knex, utf8 = false) {
         table.string('name', 50).notNullable();
         table.string('label', 30).notNullable();
         table.string('type', 30).notNullable();
-        table.boolean('automatic');
-        table.boolean('multiple');
-        table.boolean('deleted');
+        table.integer('automatic').defaultTo(0);
+        table.integer('multiple').defaultTo(0);
+        table.integer('deleted').defaultTo(0);
     });
 }
 
