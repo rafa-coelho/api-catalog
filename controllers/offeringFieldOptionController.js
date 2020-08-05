@@ -94,9 +94,9 @@ module.exports = (app) => {
         // TODO: Session verification 
         const sid = headers['authorization'];
 
-        const field = await OfferingFieldOption.GetFirst(`id = '${params.id}' AND deleted = 0`);
+        const option = await OfferingFieldOption.GetFirst(`id = '${params.id}' AND deleted = 0`);
 
-        if(!field){
+        if(!option){
             resp.errors.push({
                 msg: "Opção não encontrada"
             });
@@ -130,9 +130,53 @@ module.exports = (app) => {
 
         resp.status = 1;
         resp.msg = "Opção atualizada com sucesso!";
-        resp.data = { ...field, ...payload };
+        resp.data = { ...option, ...payload };
         res.send(resp);
 
+    });
+
+    // [DELETE] /OfferingFieldOption/:id
+    app.delete('/OfferingFieldOption/:id', async (req, res) => {
+        const { headers, params } = req;
+        const resp = {
+            status: 0,
+            msg: "",
+            errors: []
+        };
+
+        if (!headers['authorization'] || !Number(headers['authorization'])) {
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: "A Session ID precisa ser informada!"
+            });
+            return res.status(403).send(resp);
+        }
+        
+        // TODO: Session verification 
+        const sid = headers['authorization'];
+
+        const option = await OfferingFieldOption.GetFirst(`id = '${params.id}' AND deleted = 0`);
+
+        if(!option){
+            resp.errors.push({
+                msg: "Opção não encontrada"
+            });
+            return res.status(404).send(resp);
+        }
+
+        const deleteOption = await OfferingFieldOption.Delete(`id = '${params.id}'`);
+
+        if(deleteOption.status !== 1){
+            resp.errors.push({
+                msg: "Erro ao excluir Opção"
+            });
+            return res.status(500).send(resp);
+        }
+
+        resp.status = 1;
+        resp.msg = "Opção excluída com sucesso!"
+        res.send(resp);
     });
 
 };
