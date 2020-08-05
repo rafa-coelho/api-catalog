@@ -34,7 +34,7 @@ const migrate = async () => {
             await migration.up(knex, PROD);
         }catch(E){
             error = true;
-            console.log(E);
+            // console.log(E);
         }
         if(!error){
             console.log(`Runned ${file} successfully!`);
