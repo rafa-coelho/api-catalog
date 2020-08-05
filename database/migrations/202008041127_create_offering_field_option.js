@@ -6,7 +6,7 @@ exports.up = async function(knex, utf8 = false) {
         table.string('field', 45).notNullable();
         table.string('label', 50).notNullable();
         table.string('value', 50).notNullable();
-        table.boolean('deleted');
+        table.integer('deleted').defaultTo(0);
     });
 }
 
