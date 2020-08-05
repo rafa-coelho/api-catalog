@@ -101,6 +101,67 @@ module.exports = (app) => {
     });
 
     // [PUT] => /OfferingField/:id
+    app.put(`/OfferingField/:id`, async (req, res) => {
+        const { headers, body, params } = req;
+        const resp = {
+            status: 0,
+            msg: "",
+            data: null,
+            errors: []
+        };
+
+        if (!headers['authorization'] || !Number(headers['authorization'])) {
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: "A Session ID precisa ser informada!"
+            });
+            return res.status(403).send(resp);
+        }
+        
+        // TODO: Session verification 
+        const sid = headers['authorization'];
+
+        const field = await OfferingField.GetFirst(`id = '${params.id}'`);
+
+        if(!field){
+            resp.errors.push({
+                msg: "Campo não encontrado"
+            });
+            return res.status(404).send(resp);
+        }
+
+        const payload = {};
+        let edit = false;
+        OfferingField.fields.forEach(_field => {
+            if(body[_field] && ![ 'id', 'offering' ].includes(_field)){
+                payload[_field] = body[_field];
+                edit = true;
+            }
+        });
+
+        if(!edit){
+            resp.errors.push({
+                msg: "Nada para ser editado"
+            });
+            return res.send(resp);
+        }
+
+        const update = await OfferingField.Update(payload, `id = '${params.id}'`);
+
+        if(update.status !== 1){
+            resp.errors.push({
+                msg: "Erro ao atualizar campo!"
+            });
+            return res.status(500).send(resp);
+        }
+
+        resp.status = 1;
+        resp.msg = "Campo atualizado com sucesso!";
+        resp.data = { ...field, ...payload };
+        res.send(resp);
+    });
+
     // [DELETE] => /OfferingField/:id
 
 };
