@@ -43,7 +43,7 @@ module.exports = (app) => {
             return res.status(404).send(resp);
         }
 
-        const fieldNameExists = await OfferingField.GetFirst(`name = '${body.name}' AND offering = '${offering.id}'`);
+        const fieldNameExists = await OfferingField.GetFirst(`name = '${body.name}' AND offering = '${offering.id}' AND deleted = 0`);
 
         if(fieldNameExists){
             resp.errors.push({
@@ -122,7 +122,7 @@ module.exports = (app) => {
         // TODO: Session verification 
         const sid = headers['authorization'];
 
-        const field = await OfferingField.GetFirst(`id = '${params.id}'`);
+        const field = await OfferingField.GetFirst(`id = '${params.id}' AND deleted = 0`);
 
         if(!field){
             resp.errors.push({
@@ -163,5 +163,50 @@ module.exports = (app) => {
     });
 
     // [DELETE] => /OfferingField/:id
+    app.delete(`/OfferingField/:id`, async (req, res) => {
+        const { headers, params } = req;
+        const resp = {
+            status: 0,
+            msg: "",
+            errors: []
+        };
 
+        if (!headers['authorization'] || !Number(headers['authorization'])) {
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: "A Session ID precisa ser informada!"
+            });
+            return res.status(403).send(resp);
+        }
+        
+        // TODO: Session verification 
+        const sid = headers['authorization'];
+
+        const field = await OfferingField.GetFirst(`id = '${params.id}' AND deleted = 0`);
+
+        if(!field){
+            resp.errors.push({
+                msg: "Campo não encontrado"
+            });
+            return res.status(404).send(resp);
+        }
+
+        const deleteField = await OfferingField.Delete(`id = '${params.id}'`);
+
+        if(deleteField.status !== 1){
+            resp.errors.push({
+                msg: "Erro ao excluir Campo"
+            });
+            return res.status(500).send(resp);
+        }
+
+        
+        OfferingFieldOption.Delete(`field = '${params.id}'`);
+        
+
+        resp.status = 1;
+        resp.msg = "Campo excluído com sucesso!";
+        res.send(resp);
+    });
 };

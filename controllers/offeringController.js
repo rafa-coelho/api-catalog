@@ -169,7 +169,7 @@ module.exports = (app) => {
             return res.status(404).send(resp);
         }
 
-        const fields = await OfferingField.Get(`offering = '${offering.id}'`);
+        const fields = await OfferingField.Get(`offering = '${offering.id}' AND deleted = 0`);
 
         for (const field of fields) {
             const options = await OfferingFieldOption.Get(`field = '${field.id}'`);

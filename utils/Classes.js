@@ -58,10 +58,10 @@ class Classes
     
     static async Delete(where){
         const db = new DB(this.table);
+        db.Where(where);
 
         if(this.fields.includes("deleted")){
             db.deleted = 1;
-            db.Where(where);
     
             const result = await db.Update();
             return {
