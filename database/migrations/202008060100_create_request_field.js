@@ -4,8 +4,8 @@ exports.up = async function(knex, utf8 = false) {
             table.collate('utf8_unicode_ci');
         table.string('id', 45).primary();
         table.string('request', 45).notNullable();
-        table.string('field', 45).notNullable();
-        table.string('value', 100).notNullable();
+        table.string('name', 200).notNullable();
+        table.string('value', 200).notNullable();
         
         table.string('_status', 25);
         table.integer('deleted').defaultTo(0);
