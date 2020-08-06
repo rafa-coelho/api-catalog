@@ -126,7 +126,7 @@ class ServiceDesk {
 
             const json = await Util.xmlToJson(Util.xPath('//doSelectReturn', post.data)[0]);
             const attributes = {};
-            
+
             json.UDSObjectList.UDSObject[0].Attributes[0].Attribute.map(x => { attributes[x.AttrName[0]] = x.AttrValue[0] });
 
             const user = {
@@ -148,6 +148,74 @@ class ServiceDesk {
         return resp;
 
     }
+
+    static async CreateRequest(sid, customer, category, requested_by, description, summary) {
+        const response = {
+            status: 0,
+            msg:"",
+            data:""
+        };
+
+        summary = (summary == null) ? "Solicitação padrão do Catalog" : summary;
+
+        let xml = '';
+        xml += '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://www.ca.com/UnicenterServicePlus/ServiceDesk">';
+        xml += '   <soapenv:Header/>';
+        xml += '   <soapenv:Body>';
+        xml += '<impl:createRequest xmlns:impl="http://www.ca.com/UnicenterServicePlus/ServiceDesk">';
+        xml += '  <sid>' + sid + '</sid>';
+        xml += '  <creatorHandle>' + requested_by + '</creatorHandle>';
+        xml += '  <attrVals>';
+        xml += '	<string>active</string>';
+        xml += '	<string>1</string>';
+        xml += '	<string>customer</string>';
+        xml += '	<string>' + customer + '</string>';
+        xml += '	<string>priority</string>';
+        xml += '	<string>3</string>';
+        xml += '	<string>category</string>';
+        xml += '	<string>' + category + '</string>';
+        xml += '	<string>type</string>';
+        xml += '	<string>R</string>';
+        xml += '	<string>requested_by</string>';
+        xml += '	<string>' + requested_by + '</string>';
+        xml += '	<string>description</string>';
+        xml += '	<string>' + description + '</string>';
+        xml += '	<string>summary</string>';
+        xml += '	<string>' + summary + '</string>';
+        xml += '  </attrVals>';
+        xml += '  <propertyValues> </propertyValues>';
+        xml += '  <template></template>';
+        xml += '  <attributes>';
+        xml += '	<string>persistent_id</string>';
+        xml += '	<string>customer.userid</string>';
+        xml += '	<string>status.sym</string>';
+        xml += '  </attributes>';
+        xml += '  <newRequestHandle></newRequestHandle>';
+        xml += '  <newRequestNumber></newRequestNumber>';
+        xml += '</impl:createRequest>';
+        xml += '   </soapenv:Body>';
+        xml += '</soapenv:Envelope>';
+
+        try {
+            const post = await axios.post(HOST_SDM, xml, { headers: { 'SOAPAction': 'http://www.ca.com/UnicenterServicePlus/ServiceDesk/createRequest' } });
+
+            const data = post.data;
+            const persid = data.slice(data.indexOf("<newRequestHandle xmlns=\"\">"), data.indexOf("</newRequestHandle>")).replace("<newRequestHandle xmlns=\"\">", "");
+            const ref_num = data.slice(data.indexOf("<newRequestNumber xmlns=\"\">"), data.indexOf("</newRequestNumber>")).replace("<newRequestNumber xmlns=\"\">", "");
+
+            response.data = { persid, ref_num };
+            response.msg = "Chamado criado com sucesso";
+            response.status = 1;
+
+        } catch (e) {
+            response.data = "";
+            response.msg = "Error ao criar chamado";
+            response.status = 0;
+        } finally {
+            return response
+        }
+    }
+
 }
 
 module.exports = ServiceDesk;
