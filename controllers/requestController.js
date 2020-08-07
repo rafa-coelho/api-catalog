@@ -121,10 +121,6 @@ module.exports = (app) => {
 
         const requests = await Request.Get(`user = '${session.data.user}' ${where}`, order_by, limit);
 
-        for (const req of requests) {
-            req.fields = await RequestField.Get(`request = '${req.id}'`);
-        }
-
         resp.status = 1;
         resp.data = requests;
         res.send(resp);
