@@ -10,17 +10,17 @@ module.exports = (app) => {
             errors: []
         };
 
-        if (!headers['authorization'] || !Number(headers['authorization'])) {
+        // TODO: Create permission verification
+        const session = await Session.Validar(headers['authorization']);
+
+        if (!session.status) {
             resp.errors.push({
                 location: "header",
                 param: "Authorization",
-                msg: "A Session ID precisa ser informada!"
+                msg: session.msg
             });
             return res.status(403).send(resp);
         }
-        
-        // TODO: Session verification 
-        const sid = headers['authorization'];
 
         const obrigatorios = [ 'field', 'label', 'value' ];
 
@@ -82,17 +82,17 @@ module.exports = (app) => {
             errors: []
         };
 
-        if (!headers['authorization'] || !Number(headers['authorization'])) {
+        // TODO: Create permission verification
+        const session = await Session.Validar(headers['authorization']);
+
+        if (!session.status) {
             resp.errors.push({
                 location: "header",
                 param: "Authorization",
-                msg: "A Session ID precisa ser informada!"
+                msg: session.msg
             });
             return res.status(403).send(resp);
         }
-        
-        // TODO: Session verification 
-        const sid = headers['authorization'];
 
         const option = await OfferingFieldOption.GetFirst(`id = '${params.id}' AND deleted = 0`);
 
@@ -144,17 +144,17 @@ module.exports = (app) => {
             errors: []
         };
 
-        if (!headers['authorization'] || !Number(headers['authorization'])) {
+        // TODO: Create permission verification
+        const session = await Session.Validar(headers['authorization']);
+
+        if (!session.status) {
             resp.errors.push({
                 location: "header",
                 param: "Authorization",
-                msg: "A Session ID precisa ser informada!"
+                msg: session.msg
             });
             return res.status(403).send(resp);
         }
-        
-        // TODO: Session verification 
-        const sid = headers['authorization'];
 
         const option = await OfferingFieldOption.GetFirst(`id = '${params.id}' AND deleted = 0`);
 
