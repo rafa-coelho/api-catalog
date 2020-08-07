@@ -239,7 +239,7 @@ module.exports = (app) => {
 
         resp.status = 1;
         resp.msg = "Solicitação atualizada com sucesso!";
-        resp.data = { ...request, ...update.data, fields: [ ...request.fields] };
+        resp.data = { ...request, ...update.data, fields: [ ...body.fields, ] };
         res.send(resp);
     });
 }
