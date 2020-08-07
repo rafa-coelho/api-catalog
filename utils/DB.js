@@ -17,7 +17,7 @@ class DB
     
     
     async Get(){
-        const where = (this.where != "" && this.where != undefined) ? `(${this.where}) AND deleted = 0` : "deleted = 0`";
+        const where = (this.where != "" && this.where != undefined) ? `(${this.where}) AND deleted = 0` : "deleted = 0";
         const order_by = (this.order_by) ? this.order_by : "id desc";
         let limit = (this._limit) ? this._limit : 1000000;
         let offset = (this._offset) ? this._offset : 0;
@@ -58,7 +58,7 @@ class DB
     }
     
     async Update(callback){
-        const where = (this.where != "" && this.where != undefined) ? `(${this.where}) AND deleted = 0` : "deleted = 0`";
+        const where = (this.where != "" && this.where != undefined) ? `(${this.where}) AND deleted = 0` : "deleted = 0";
 
         const obj = {};
 
@@ -80,7 +80,7 @@ class DB
     }
     
     async Delete(){
-        const where = (this.where != "" && this.where != undefined) ? `(${this.where}) AND deleted = 0` : "deleted = 0`";
+        const where = (this.where != "" && this.where != undefined) ? `(${this.where}) AND deleted = 0` : "deleted = 0";
 
         return await knex(this.table)
             .whereRaw(where)
