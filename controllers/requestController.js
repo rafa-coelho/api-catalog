@@ -93,4 +93,40 @@ module.exports = (app) => {
         resp.data = payload;
         res.send(resp);
     });
+
+    // [GET] => /request
+    app.get('/request', async (req, res) => {
+        const { headers, query } = req;
+        const resp = {
+            status: 0,
+            msg: "",
+            data: null,
+            errors: []
+        };
+
+        const session = await Session.Validar(headers['authorization']);
+        
+        if (!session.status) {
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: session.msg
+            });
+            return res.status(403).send(resp);
+        }
+
+        const where = (query.where) ? `AND (${query.where})` : "";
+        const order_by = (query.order_by) ? query.order_by : "";
+        const limit = (query.limit) ? query.limit : "";
+
+        const requests = await Request.Get(`user = '${session.data.user}' ${where}`, order_by, limit);
+
+        for (const req of requests) {
+            req.fields = await RequestField.Get(`request = '${req.id}'`);
+        }
+
+        resp.status = 1;
+        resp.data = requests;
+        res.send(resp);
+    });
 }
