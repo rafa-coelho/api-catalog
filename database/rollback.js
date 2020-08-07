@@ -2,7 +2,6 @@ global.PROD = process.env.NODE_ENV == 'prod';
 const fs = require('fs');
 const path = require('path');
 const knex = require('./connection');
-const e = require('express');
 
 const migrationsDir = path.join(__dirname, 'migrations');
 
