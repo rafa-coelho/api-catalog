@@ -79,6 +79,14 @@ class Classes
         const db = new DB(this.table);
         db.Where(where);
 
+        db.deleted = 1;
+
+        const result = await db.Update();
+        return {
+            status: (result) ? 1 : 0,
+            msg: (result) ? "Excluido com sucesso!" : "Erro ao excluir!"
+        };
+        
         if(this.fields.includes("deleted")){
             db.deleted = 1;
     
