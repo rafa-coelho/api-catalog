@@ -13,7 +13,7 @@ module.exports = (app) => {
         };
 
         const session = await Session.Validar(headers['authorization']);
-        
+
         if (!session.status) {
             resp.errors.push({
                 location: "header",
@@ -69,7 +69,7 @@ module.exports = (app) => {
 
         const create = await Request.Create(payload);
 
-        if(create.status !== 1){
+        if (create.status !== 1) {
             resp.errors.push({
                 msg: "Erro ao criar Solicitação"
             });
@@ -105,7 +105,7 @@ module.exports = (app) => {
         };
 
         const session = await Session.Validar(headers['authorization']);
-        
+
         if (!session.status) {
             resp.errors.push({
                 location: "header",
@@ -137,7 +137,7 @@ module.exports = (app) => {
         };
 
         const session = await Session.Validar(headers['authorization']);
-        
+
         if (!session.status) {
             resp.errors.push({
                 location: "header",
@@ -149,7 +149,7 @@ module.exports = (app) => {
 
         const request = await Request.GetFirst(`user = '${session.data.user}' AND id = '${params.id}'`);
 
-        if(!request){
+        if (!request) {
             resp.errors.push({
                 msg: "Solitação não encontrada"
             });
@@ -157,10 +157,89 @@ module.exports = (app) => {
         }
 
         request.fields = await RequestField.Get(`request = '${request.id}'`);
-        
+
         resp.status = 1;
         resp.data = request;
         res.send(resp);
     });
-    
+
+    // [PUT] => /request/:id
+    app.put('/request/:id', async (req, res) => {
+        const { headers, params, body } = req;
+        const resp = {
+            status: 0,
+            msg: "",
+            data: null,
+            errors: []
+        };
+
+        const session = await Session.Validar(headers['authorization']);
+
+        if (!session.status) {
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: session.msg
+            });
+            return res.status(403).send(resp);
+        }
+
+        const request = await Request.GetFirst(`user = '${session.data.user}' AND id = '${params.id}'`);
+
+        if (!request) {
+            resp.errors.push({
+                msg: "Solitação não encontrada"
+            });
+            return res.status(404).send(resp);
+        }
+
+        const payload = {};
+        let edit = false
+        for (const field of Request.fields) {
+            if (body[field] && !['id', 'user', 'created_at', 'updated_at'].includes(field)) {
+                payload[field] = body[field];
+                edit = true;
+            }
+        }
+
+        request.fields = await RequestField.Get(`request = '${request.id}'`);
+
+        if (body.fields && Array.isArray(body.fields)) {
+            const hasFieldError = body.fields.find(x => !['', null, undefined].includes(x.id) && !['', null, undefined].includes(x.name) );
+
+            if (hasFieldError) {
+                resp.errors.push({
+                    msg: "A 'id' ou 'name' dos campos precisa ser fornecida!"
+                });
+                return res.status(400).send(resp);
+            }
+
+            if(body.fields.find( bfield => ['', null, undefined].includes(bfield.name))){
+                edit = true;
+            }
+        }
+
+        if (!edit) {
+            resp.errors.push({
+                msg: "Não há nada para editar"
+            });
+            res.status(400).send(resp);
+        }
+
+        const update = await Request.Update(payload, `id = '${params.id}'`);
+
+        if(update.status !== 1){
+            resp.errors.push({
+                msg: "Erro ao atualizar a Solicitação"
+            });
+            return res.status(500).send(resp);
+        }
+
+        body.fields.forEach(field => RequestField.Update({ value: field.value }, `(id = '${field.id}' OR name = '${field.name}') AND request = '${params.id}'`));
+
+        resp.status = 1;
+        resp.msg = "Solicitação atualizada com sucesso!";
+        resp.data = { ...request, ...update.data, fields: [ ...request.fields] };
+        res.send(resp);
+    });
 }

@@ -10,6 +10,12 @@ class Request extends Classes
         return Classes.Create.bind(this)(data);
     }
 
+    static Update(data, where){
+        data._status = "updated";
+        data.updated_at = new Date().toJSON();
+        return Classes.Update.bind(this)(data, where);
+    }
+
 }
 
 module.exports = Request;

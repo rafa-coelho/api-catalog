@@ -70,6 +70,7 @@ class Classes
         const result = await db.Update();
         return {
             status: (result) ? 1 : 0,
+            data,
             msg: (result) ? "Atualizado com sucesso!" : "Erro ao atualizar!"
         };
     }
