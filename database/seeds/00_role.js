@@ -2,7 +2,7 @@ exports.seed = function (knex) {
     return knex('role').insert([
         {
             id: "031df649-fe3f-461f-80f0-52b6da4d405f",
-            name: "administator",
+            name: "administrator",
             label: "Administrador",
             description: "Perfil utilizado por administradores"
         },
