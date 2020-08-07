@@ -242,4 +242,50 @@ module.exports = (app) => {
         resp.data = { ...request, ...update.data, fields: [ ...body.fields, ] };
         res.send(resp);
     });
+
+    // [DELETE] => /request/:id
+    app.delete('/request/:id', async (req, res) => {
+        const { headers, params } = req;
+        const resp = {
+            status: 0,
+            msg: "",
+            data: null,
+            errors: []
+        };
+
+        const session = await Session.Validar(headers['authorization']);
+
+        if (!session.status) {
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: session.msg
+            });
+            return res.status(403).send(resp);
+        }
+
+        const request = await Request.GetFirst(`user = '${session.data.user}' AND id = '${params.id}'`);
+
+        if (!request) {
+            resp.errors.push({
+                msg: "Solitação não encontrada"
+            });
+            return res.status(404).send(resp);
+        }
+
+        const deleteRequest = await Request.Delete(`id = '${params.id}'`);
+
+        if(deleteRequest.status !== 1){
+            resp.errors.push({
+                msg: "Erro ao excluir Solicitação"
+            });
+            return res.status(500).send(resp);
+        }
+
+        RequestField.Delete(`request = '${params.id}'`);
+
+        resp.status = 1;
+        resp.msg = "Solitação excluída com sucesso!";
+        res.send(resp);
+    });
 }
