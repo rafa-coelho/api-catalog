@@ -11,7 +11,16 @@ class Classes
         db.Where(where);
         db.OrderBy(order_by);
         db.Limit(limit);
-        return await db.Get();
+
+        const data = (await db.Get()).map(x => {
+            const obj = {};
+            for (const field of this.fields) {
+                obj[field] = x[field];
+            }
+            return obj;
+        });
+
+        return data;
     }
 
     static async GetFirst(where, order_by = "", limit = ""){
@@ -19,7 +28,16 @@ class Classes
         db.Where(where);
         db.OrderBy(order_by);
         db.Limit(limit);
-        return (await db.Get())[0];
+
+        const data = (await db.Get()).map(x => {
+            const obj = {};
+            for (const field of this.fields) {
+                obj[field] = x[field];
+            }
+            return obj;
+        });
+
+        return data[0];
     }
 
     static async Create(data){
