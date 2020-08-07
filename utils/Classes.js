@@ -11,7 +11,16 @@ class Classes
         db.Where(where);
         db.OrderBy(order_by);
         db.Limit(limit);
-        return await db.Get();
+
+        const data = (await db.Get()).map(x => {
+            const obj = {};
+            for (const field of this.fields) {
+                obj[field] = x[field];
+            }
+            return obj;
+        });
+
+        return data;
     }
 
     static async GetFirst(where, order_by = "", limit = ""){
@@ -19,7 +28,16 @@ class Classes
         db.Where(where);
         db.OrderBy(order_by);
         db.Limit(limit);
-        return (await db.Get())[0];
+
+        const data = (await db.Get()).map(x => {
+            const obj = {};
+            for (const field of this.fields) {
+                obj[field] = x[field];
+            }
+            return obj;
+        });
+
+        return data[0];
     }
 
     static async Create(data){
@@ -52,16 +70,25 @@ class Classes
         const result = await db.Update();
         return {
             status: (result) ? 1 : 0,
+            data,
             msg: (result) ? "Atualizado com sucesso!" : "Erro ao atualizar!"
         };
     }
     
     static async Delete(where){
         const db = new DB(this.table);
+        db.Where(where);
 
+        db.deleted = 1;
+
+        const result = await db.Update();
+        return {
+            status: (result) ? 1 : 0,
+            msg: (result) ? "Excluido com sucesso!" : "Erro ao excluir!"
+        };
+        
         if(this.fields.includes("deleted")){
-            db.excluido = 1;
-            db.Where(where);
+            db.deleted = 1;
     
             const result = await db.Update();
             return {

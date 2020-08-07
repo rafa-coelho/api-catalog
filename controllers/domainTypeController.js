@@ -9,18 +9,16 @@ module.exports = (app) => {
             errors: []
         };
 
-        if(!headers['authorization'] || !Number(headers['authorization'])){
+        const session = await Session.Validar(headers['authorization']);
+
+        if (!session.status) {
             resp.errors.push({
                 location: "header",
                 param: "Authorization",
-                msg: "A Session ID precisa ser informada!"
+                msg: session.msg
             });
             return res.status(403).send(resp);
-        }
-        
-        // TODO: Session verification 
-        const sid = headers['authorization'];
-        
+        }        
         
         const obrigatorios = [ 'name', 'description' ];
 
@@ -64,18 +62,17 @@ module.exports = (app) => {
             errors: []
         };
 
-        if(!headers['authorization'] || !Number(headers['authorization'])){
+        const session = await Session.Validar(headers['authorization']);
+
+        if (!session.status) {
             resp.errors.push({
                 location: "header",
                 param: "Authorization",
-                msg: "A Session ID precisa ser informada!"
+                msg: session.msg
             });
             return res.status(403).send(resp);
         }
-
-        const sid = headers['authorization'];
-
-        // TODO: Session verification        
+      
         const where = (query.where) ? query.where : "";
         const order_by = (query.order_by) ? query.order_by : "";
         const limit = (query.limit) ? query.limit : "";
@@ -96,17 +93,16 @@ module.exports = (app) => {
             errors: []
         };
 
-        if(!headers['authorization'] || !Number(headers['authorization'])){
+        const session = await Session.Validar(headers['authorization']);
+
+        if (!session.status) {
             resp.errors.push({
                 location: "header",
                 param: "Authorization",
-                msg: "A Session ID precisa ser informada!"
+                msg: session.msg
             });
             return res.status(403).send(resp);
         }
-
-        // TODO: Session verification        
-        const sid = headers['authorization'];
 
         const type = await DomainType.GetFirst(`id = '${params.id}'`);
 
@@ -131,17 +127,16 @@ module.exports = (app) => {
             errors: []
         };
 
-        if(!headers['authorization'] || !Number(headers['authorization'])){
+        const session = await Session.Validar(headers['authorization']);
+
+        if (!session.status) {
             resp.errors.push({
                 location: "header",
                 param: "Authorization",
-                msg: "A Session ID precisa ser informada!"
+                msg: session.msg
             });
             return res.status(403).send(resp);
         }
-
-        // TODO: Session verification        
-        const sid = headers['authorization'];
                 
         const type = await DomainType.GetFirst(`id = '${params.id}'`);
 
