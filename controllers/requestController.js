@@ -125,4 +125,42 @@ module.exports = (app) => {
         resp.data = requests;
         res.send(resp);
     });
+
+    // [GET] => /request/:id
+    app.get('/request/:id', async (req, res) => {
+        const { headers, params } = req;
+        const resp = {
+            status: 0,
+            msg: "",
+            data: null,
+            errors: []
+        };
+
+        const session = await Session.Validar(headers['authorization']);
+        
+        if (!session.status) {
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: session.msg
+            });
+            return res.status(403).send(resp);
+        }
+
+        const request = await Request.GetFirst(`user = '${session.data.user}' AND id = '${params.id}'`);
+
+        if(!request){
+            resp.errors.push({
+                msg: "Solitação não encontrada"
+            });
+            return res.status(404).send(resp);
+        }
+
+        request.fields = await RequestField.Get(`request = '${request.id}'`);
+        
+        resp.status = 1;
+        resp.data = request;
+        res.send(resp);
+    });
+    
 }
