@@ -121,36 +121,29 @@ module.exports = (app) => {
         res.send(resp);
     });
 
-    //Endpoint logout
     app.post('/logout', async (req, res) => {
+        const { headers } = req;
 
         const response = {
-            data: "",
-            msg: "",
-            status: 1
+            status: 0,
+            msg: ""
         };
 
-        const { headers } = req;
-        const sid = headers['authorization'];
+        const session = await Session.GetFirst(`id = '${headers['authorization']}'`);
+        
+        if(session){
+            const logout = await Session.Delete(`ìd = '${headers['authorization']}'`);
+            if(logout.status !== 1){
+                resp.errors.push({
+                    msg: "Erro ao realizar logout!"
+                });
+                return res.status(500).send(resp);
+            }
+        }
 
-        let xml = '';
-        xml += '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://www.ca.com/UnicenterServicePlus/ServiceDesk">'
-        xml += '    <soapenv:Header/>'
-        xml += '    <soapenv:Body>'
-        xml += '        <ser:logout>'
-        xml += '            <sid>' + sid + '</sid>'
-        xml += '        </ser:logout>'
-        xml += '    </soapenv:Body>'
-        xml += '</soapenv:Envelope>'
-
-        try {
-            await axios.post(HOST_SDM, xml, { headers: { 'SOAPAction': 'http://www.ca.com/UnicenterServicePlus/ServiceDesk/logout' } });
-        } catch (e) {
-            console.log(e);
-        } finally {
-            res.send(response);
-        };
-
+        resp.status = 1;
+        resp.msg = "Logout realizado com sucesso!";
+        res.send(resp);
     });
 
 };
