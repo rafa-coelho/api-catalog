@@ -251,6 +251,39 @@ class ServiceDesk {
         }
     }
 
+    static async GetCategoryById(sid, id){
+        let xml = '';
+        xml += `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://www.ca.com/UnicenterServicePlus/ServiceDesk">`;
+        xml += `   <soapenv:Header/>`;
+        xml += `   <soapenv:Body>`;
+        xml += `      <ser:doSelect>`;
+        xml += `         <sid>${sid}</sid>`;
+        xml += `         <objectType>pcat</objectType>`;
+        xml += `         <whereClause>id=${id}</whereClause>`;
+        xml += `         <maxRows>1</maxRows>`;
+        xml += `         <attributes>`;
+        xml += `            <string>sym</string>`;
+        xml += `         </attributes>`;
+        xml += `      </ser:doSelect>`;
+        xml += `   </soapenv:Body>`;
+        xml += `</soapenv:Envelope>`;
+
+        try{
+            const post = await axios.post(HOST_SDM, xml, {
+                headers: { 'SOAPAction': 'http://www.ca.com/UnicenterServicePlus/ServiceDesk/USD_WebServiceSoap/doSelectRequest' }
+            });
+
+            const json = await Util.xmlToJson(Util.xPath('//doSelectReturn', post.data)[0]);
+            const attributes = {};
+            json.UDSObjectList.UDSObject[0].Attributes[0].Attribute.map(x => { attributes[x.AttrName[0]] = x.AttrValue[0] });
+
+            return attributes.sym || null;
+        }catch(e){
+            console.log(e.response);
+            return null;
+        }
+    }
+
 }
 
 module.exports = ServiceDesk;
