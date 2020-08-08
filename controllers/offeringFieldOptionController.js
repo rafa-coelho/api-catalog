@@ -10,8 +10,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        // TODO: Create permission verification
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'post.OfferingFieldOption');
 
         if (!session.status) {
             resp.errors.push({
@@ -82,8 +81,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        // TODO: Create permission verification
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'put.OfferingFieldOption');
 
         if (!session.status) {
             resp.errors.push({
@@ -145,7 +143,7 @@ module.exports = (app) => {
         };
 
         // TODO: Create permission verification
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'delete.OfferingFieldOption');
 
         if (!session.status) {
             resp.errors.push({
