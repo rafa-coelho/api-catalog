@@ -4,7 +4,7 @@ class Session extends Classes
     static table = 'session';
     static fields = [ 'id', 'user', 'status' ];
 
-    static async Validar(id = null, module){
+    static async Validar(id = null, action){
         const response = {
             status: false,
             data: null
@@ -19,11 +19,19 @@ class Session extends Classes
                 response.msg = "Sessão inválida!";
             }else{
                 const userRoles = await UserRole.Get(`user = '${sessao.user}'`);
-                response.status = 1
-                response.data = { 
-                    ...sessao,
-                    roles: (await Role.Get(`id in ('${userRoles.map(x => x.role).join(`', '`) }')`)).map(x => x.name)
-                };
+
+                const hasPermission = (await RolePermission.Count(`role in ('${userRoles.map(x => x.role).join(`', '`) }') AND action = '${action}'`)) > 0;
+
+                if(!hasPermission){
+                    response.msg = "Você não tem permissão para realizar esta ação!"
+                }else{
+                    response.status = 1
+                    response.data = { 
+                        ...sessao,
+                        roles: (await Role.Get(`id in ('${userRoles.map(x => x.role).join(`', '`) }')`)).map(x => x.name)
+                    };
+                }
+
             }
 
         }
