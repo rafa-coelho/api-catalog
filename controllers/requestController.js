@@ -12,7 +12,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'post.request');
 
         if (!session.status) {
             resp.errors.push({
@@ -104,7 +104,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'get.request');
 
         if (!session.status) {
             resp.errors.push({
@@ -136,7 +136,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'get.request');
 
         if (!session.status) {
             resp.errors.push({
@@ -173,7 +173,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'put.request');
 
         if (!session.status) {
             resp.errors.push({
@@ -253,7 +253,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'delete.request');
 
         if (!session.status) {
             resp.errors.push({
