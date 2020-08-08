@@ -5,8 +5,6 @@ const axios = require('axios').default;
 module.exports = (app) => {
     //Endpoint login
     app.post('/login', async (req, res) => {
-        const salt = 'CATALOG SALT';
-
         // Default response
         const resp = {
             status: 0,
@@ -64,7 +62,28 @@ module.exports = (app) => {
                 user.password = Crypto.Encrypt(body.password, user.id);
                 await User.Update(user, `id = '${contactExists.id}'`);
             }else{
-                await User.Create(user);
+                const createUser = await User.Create(user);
+                
+                if(createUser.status === 1){
+                    const roles = [];
+                    
+                    if(user.access_type.toLowerCase().startsWith('admin')){
+                        const adminRole = await Role.GetFirst(`name = 'administrator'`);
+                        roles.push(adminRole.id);
+                    }
+    
+                    const userRole = await Role.GetFirst(`name = 'user'`);
+    
+                    roles.push(userRole.id);
+
+                    roles.forEach(roleId => {
+                        UserRole.Create({
+                            id: Util.generateId(),
+                            user: user.id,
+                            role: roleId
+                        });
+                    });
+                }
             }
 
             userid = user.id;

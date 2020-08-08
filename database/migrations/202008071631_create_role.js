@@ -6,6 +6,7 @@ exports.up = async function(knex, utf8 = false) {
         table.string('name', 50).notNullable();
         table.string('label', 50).notNullable();
         table.string('description', 200);
+        table.integer('deleted').defaultTo(0);
     });
 }
 
