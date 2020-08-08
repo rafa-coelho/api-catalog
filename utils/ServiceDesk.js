@@ -11,30 +11,39 @@ class ServiceDesk {
             msg: ''
         };
 
-        let xml = '';
-        xml += `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://www.ca.com/UnicenterServicePlus/ServiceDesk">`;
-        xml += `   <soapenv:Header/>`;
-        xml += `   <soapenv:Body>`;
-        xml += `      <ser:login>`;
-        xml += `         <username>${username}</username>`;
-        xml += `         <password>${password}</password>`;
-        xml += `      </ser:login>`;
-        xml += `   </soapenv:Body>`;
-        xml += `</soapenv:Envelope>`;
+        const doLogin = async (username, password) => {
+            let xml = '';
+            xml += `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://www.ca.com/UnicenterServicePlus/ServiceDesk">`;
+            xml += `   <soapenv:Header/>`;
+            xml += `   <soapenv:Body>`;
+            xml += `      <ser:login>`;
+            xml += `         <username>${username}</username>`;
+            xml += `         <password>${password}</password>`;
+            xml += `      </ser:login>`;
+            xml += `   </soapenv:Body>`;
+            xml += `</soapenv:Envelope>`;
 
-        try {
             const post = await axios.post(HOST_SDM, xml, {
                 headers: { 'SOAPAction': 'http://www.ca.com/UnicenterServicePlus/ServiceDesk/login' }
             });
 
             const sid = Util.xPath('//loginReturn', post.data)[0];
             if (Number(sid)) {
+                return sid;
+            };
+        }
+
+        for (let i = 0; i < 3; i++) {
+            try {
+                const sid = await doLogin(username, password);
                 resp.data = sid;
                 resp.msg = "Login realizado com sucesso";
                 resp.status = 1;
-            };
-        } catch (e) {
-            resp.msg = "Error ao fazer login";
+                break;
+            } catch (e) {
+                resp.msg = "Error ao fazer login";
+                console.log(e);
+            }
         }
 
         return resp;
@@ -128,7 +137,7 @@ class ServiceDesk {
             const json = await Util.xmlToJson(Util.xPath('//doSelectReturn', post.data)[0]);
             const attributes = {};
             json.UDSObjectList.UDSObject[0].Attributes[0].Attribute.map(x => { attributes[x.AttrName[0]] = x.AttrValue[0] });
-            
+
             const user = {
                 name: [attributes['first_name'], attributes['middle_name'], attributes['last_name']].filter(x => !["", null].includes(x)).join(' '),
                 username: attributes['userid'],
@@ -234,7 +243,7 @@ class ServiceDesk {
         xml += `   </soapenv:Body>`;
         xml += `</soapenv:Envelope>`;
 
-        try{
+        try {
             const post = await axios.post(HOST_SDM, xml, {
                 headers: { 'SOAPAction': 'http://www.ca.com/UnicenterServicePlus/ServiceDesk/USD_WebServiceSoap/doSelectRequest' }
             });
@@ -245,13 +254,13 @@ class ServiceDesk {
 
             return attributes.sym;
 
-        }catch(e){
+        } catch (e) {
             console.log(e.response)
             return null;
         }
     }
 
-    static async GetCategoryById(sid, id){
+    static async GetCategoryById(sid, id) {
         id = id.replace(/\D+/g, '');
         let xml = '';
         xml += `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://www.ca.com/UnicenterServicePlus/ServiceDesk">`;
@@ -269,7 +278,7 @@ class ServiceDesk {
         xml += `   </soapenv:Body>`;
         xml += `</soapenv:Envelope>`;
 
-        try{
+        try {
             const post = await axios.post(HOST_SDM, xml, {
                 headers: { 'SOAPAction': 'http://www.ca.com/UnicenterServicePlus/ServiceDesk/USD_WebServiceSoap/doSelectRequest' }
             });
@@ -279,7 +288,7 @@ class ServiceDesk {
             json.UDSObjectList.UDSObject[0].Attributes[0].Attribute.map(x => { attributes[x.AttrName[0]] = x.AttrValue[0] });
 
             return attributes.sym || null;
-        }catch(e){
+        } catch (e) {
             console.log(e.response);
             return null;
         }
