@@ -4,7 +4,7 @@ class Session extends Classes
     static table = 'session';
     static fields = [ 'id', 'user', 'status' ];
 
-    static async Validar(id = null){
+    static async Validar(id = null, module){
         const response = {
             status: false,
             data: null
@@ -18,8 +18,12 @@ class Session extends Classes
             if(!sessao){
                 response.msg = "Sessão inválida!";
             }else{
+                const userRoles = await UserRole.Get(`user = '${sessao.user}'`);
                 response.status = 1
-                response.data = sessao;
+                response.data = { 
+                    ...sessao,
+                    roles: (await Role.Get(`id in ('${userRoles.map(x => x.role).join(`', '`) }')`)).map(x => x.name)
+                };
             }
 
         }
