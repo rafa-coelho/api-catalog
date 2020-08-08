@@ -10,7 +10,6 @@ module.exports = (app) => {
         };
 
         const session = await Session.Validar(headers['authorization'], 'post.DomainType');
-
         if (!session.status) {
             resp.errors.push({
                 location: "header",
@@ -18,7 +17,7 @@ module.exports = (app) => {
                 msg: session.msg
             });
             return res.status(403).send(resp);
-        }        
+        }
         
         const obrigatorios = [ 'name', 'description' ];
 
@@ -62,7 +61,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'get.DomainType');
 
         if (!session.status) {
             resp.errors.push({
@@ -93,7 +92,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'get.DomainType');
 
         if (!session.status) {
             resp.errors.push({
@@ -127,7 +126,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'put.DomainType');
 
         if (!session.status) {
             resp.errors.push({
