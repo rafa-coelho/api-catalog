@@ -1,3 +1,4 @@
+require('dotenv').config();
 global.PROD = process.env.NODE_ENV == 'prod';
 const fs = require('fs');
 const path = require('path');
@@ -5,7 +6,7 @@ const database = require('./connection');
 
 const migrationsDir = path.join(__dirname, 'migrations');
 
-const migrate = async () => {
+const createDB = async () => {
     if(PROD){
         const conn = {
             host: process.env.DB_HOST ? process.env.DB_HOST : "127.0.0.1",
@@ -16,11 +17,16 @@ const migrate = async () => {
     
         try{
             const knex = require('knex')({ client: 'mysql', connection: conn });
-            knex.raw(`CREATE DATABASE ${process.env.DB_BASE ? process.env.DB_BASE : "catalog"}`).then(() => { }).catch(e => {});
+            await knex.raw(`CREATE DATABASE ${process.env.DB_BASE ? process.env.DB_BASE : "catalog"}`).then(() => { }).catch(e => {});
         }catch(e){
             console.log(e);
         }
     }
+    return true;
+};
+
+const migrate = async () => {
+    await createDB();
     
     const migrations = fs.readdirSync(migrationsDir);
 
@@ -31,7 +37,7 @@ const migrate = async () => {
             await migration.up(database, PROD);
         }catch(E){
             error = true;
-            // console.log(E);
+            console.log(E);
         }
         if(!error){
             console.log(`Runned ${file} successfully!`);

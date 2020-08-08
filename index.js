@@ -3,10 +3,11 @@ const app = express();
 const cors = require('cors');
 const expressValidator = require("express-validator");
 
+require('dotenv').config();
+
 app.use(express.json());
 app.use(cors());
 app.use(expressValidator());
-
 
 global.PROD = process.env.NODE_ENV === 'prod'
 global.HOST_SDM = "https://dessdm-por.sonda.com:8080/axis/services/USD_R11_WebService";
