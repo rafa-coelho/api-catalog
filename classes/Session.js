@@ -19,7 +19,6 @@ class Session extends Classes
                 response.msg = "Sessão inválida!";
             }else{
                 const userRoles = await UserRole.Get(`user = '${sessao.user}'`);
-
                 const hasPermission = (await RolePermission.Count(`role in ('${userRoles.map(x => x.role).join(`', '`) }') AND action = '${action}'`)) > 0;
 
                 if(!hasPermission){
@@ -31,9 +30,7 @@ class Session extends Classes
                         roles: (await Role.Get(`id in ('${userRoles.map(x => x.role).join(`', '`) }')`)).map(x => x.name)
                     };
                 }
-
             }
-
         }
 
         return response;

@@ -1,21 +1,16 @@
-//Pegando Axios - Faz requisições em HTTP ou HTTPS
-const axios = require('axios').default;
-
-//Pegando o express
 module.exports = (app) => {
-    //Endpoint login
+
     app.post('/login', async (req, res) => {
-        // Default response
         const resp = {
             status: 0,
-            msg:"",
+            msg: "",
             data: null,
             errors: []
         };
 
         const { body } = req;
 
-        const obrigatorios = [ 'username', 'password' ];
+        const obrigatorios = ['username', 'password'];
 
         obrigatorios.forEach(campo => {
             req.assert(campo, `O campo '${campo}' é obrigatório!`).notEmpty();
@@ -23,26 +18,26 @@ module.exports = (app) => {
 
         resp.errors = req.validationErrors() || [];
 
-        if(resp.errors.length > 0){
+        if (resp.errors.length > 0) {
             return res.status(400).send(resp);
         }
 
         const usernameExists = await User.GetFirst(`username = '${body.username}'`);
         let userid = '';
 
-        if(!usernameExists){
+        if (!usernameExists) {
             const login = await ServiceDesk.Login(body.username, body.password);
-            
-            if(login.status !== 1){
+
+            if (login.status !== 1) {
                 resp.errors.push({
                     msg: 'Erro ao realizar login'
                 });
                 return res.status(401).send(resp);
             }
-            
+
             const contact = await ServiceDesk.GetContact(login.data, body.username);
-            
-            if(contact.status !== 1){
+
+            if (contact.status !== 1) {
                 resp.errors.push({
                     msh: "Erro ao encontrar usuário no Service Desk"
                 });
@@ -57,23 +52,23 @@ module.exports = (app) => {
             user.password = Crypto.Encrypt(body.password, user.id);
 
             const contactExists = await User.GetFirst(`external_id = '${user.external_id}'`);
-            if(contactExists){
+            if (contactExists) {
                 user.id = contactExists.id;
                 user.password = Crypto.Encrypt(body.password, user.id);
                 await User.Update(user, `id = '${contactExists.id}'`);
-            }else{
+            } else {
                 const createUser = await User.Create(user);
-                
-                if(createUser.status === 1){
+
+                if (createUser.status === 1) {
                     const roles = [];
-                    
-                    if(user.access_type.toLowerCase().startsWith('admin')){
+
+                    if (user.access_type.toLowerCase().startsWith('admin')) {
                         const adminRole = await Role.GetFirst(`name = 'administrator'`);
                         roles.push(adminRole.id);
                     }
-    
+
                     const userRole = await Role.GetFirst(`name = 'user'`);
-    
+
                     roles.push(userRole.id);
 
                     roles.forEach(roleId => {
@@ -87,10 +82,10 @@ module.exports = (app) => {
             }
 
             userid = user.id;
-        }else{
+        } else {
             userid = usernameExists.id;
 
-            if(Crypto.Decrypt(usernameExists.password, usernameExists.id) !== body.password){
+            if (Crypto.Decrypt(usernameExists.password, usernameExists.id) !== body.password) {
                 resp.errors.push({
                     msg: "Senha incorreta!"
                 });
@@ -98,16 +93,14 @@ module.exports = (app) => {
             }
 
             const login = await ServiceDesk.Login(body.username, body.password);
-            if(login.status !== 1){
+            if (login.status !== 1) {
                 resp.errors.push({
                     msg: 'Erro ao realizar login'
                 });
                 return res.status(401).send(resp);
             }
         }
-        
-        // TODO: Verify if SDM password has changed
-        
+
         const session = {
             id: Util.generateId(),
             user: userid
@@ -115,7 +108,7 @@ module.exports = (app) => {
 
         const createSession = await Session.Create(session);
 
-        if(createSession.status !== 1){
+        if (createSession.status !== 1) {
             resp.errors.push({
                 msg: "Erro ao gerar sessão"
             });
@@ -124,20 +117,20 @@ module.exports = (app) => {
 
         resp.status = 1;
         resp.msg = "Login realizado com sucesso!";
-        resp.data = session.id;
+        resp.data = { id: session.id, roles: await Role.GetUserRoles(userid) };
         res.send(resp);
-    });  
+    });
 
     //Endpoint logout
-    app.post('/logout', async(req,res)=>{
+    app.post('/logout', async (req, res) => {
 
         const response = {
             data: "",
-            msg:"",
+            msg: "",
             status: 1
         };
 
-        const {headers} = req;
+        const { headers } = req;
         const sid = headers['authorization'];
 
         let xml = '';
@@ -145,19 +138,19 @@ module.exports = (app) => {
         xml += '    <soapenv:Header/>'
         xml += '    <soapenv:Body>'
         xml += '        <ser:logout>'
-        xml += '            <sid>'+sid+'</sid>'
+        xml += '            <sid>' + sid + '</sid>'
         xml += '        </ser:logout>'
         xml += '    </soapenv:Body>'
         xml += '</soapenv:Envelope>'
 
-        try{
-            await axios.post(HOST_SDM,xml,{headers:{'SOAPAction':'http://www.ca.com/UnicenterServicePlus/ServiceDesk/logout'}});
-        }catch(e){
+        try {
+            await axios.post(HOST_SDM, xml, { headers: { 'SOAPAction': 'http://www.ca.com/UnicenterServicePlus/ServiceDesk/logout' } });
+        } catch (e) {
             console.log(e);
-        }finally{
+        } finally {
             res.send(response);
         };
-        
+
     });
-    
+
 };
