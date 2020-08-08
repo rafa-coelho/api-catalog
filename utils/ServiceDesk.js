@@ -114,6 +114,7 @@ class ServiceDesk {
         xml += `            <string>last_name</string>`;
         xml += `            <string>userid</string>`;
         xml += `            <string>email_address</string>`;
+        xml += `            <string>access_type</string>`;
         xml += `         </attributes>`;
         xml += `      </ser:doSelect>`;
         xml += `   </soapenv:Body>`;
@@ -127,12 +128,13 @@ class ServiceDesk {
             const json = await Util.xmlToJson(Util.xPath('//doSelectReturn', post.data)[0]);
             const attributes = {};
             json.UDSObjectList.UDSObject[0].Attributes[0].Attribute.map(x => { attributes[x.AttrName[0]] = x.AttrValue[0] });
-
+            
             const user = {
                 name: [attributes['first_name'], attributes['middle_name'], attributes['last_name']].filter(x => !["", null].includes(x)).join(' '),
                 username: attributes['userid'],
                 email: attributes['email_address'],
-                external_id: json.UDSObjectList.UDSObject[0].Handle[0]
+                external_id: json.UDSObjectList.UDSObject[0].Handle[0],
+                access_type: await this.GetRoleSymById(session_id, attributes['access_type'])
             }
 
             resp.status = 1;
@@ -151,8 +153,8 @@ class ServiceDesk {
     static async CreateRequest(sid, customer, category, requested_by, description, summary) {
         const response = {
             status: 0,
-            msg:"",
-            data:""
+            msg: "",
+            data: ""
         };
 
         summary = (summary == null) ? "Solicitação padrão do Catalog" : summary;
@@ -212,6 +214,40 @@ class ServiceDesk {
             response.status = 0;
         } finally {
             return response
+        }
+    }
+
+    static async GetRoleSymById(sid, id) {
+        let xml = '';
+        xml += `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://www.ca.com/UnicenterServicePlus/ServiceDesk">`;
+        xml += `   <soapenv:Header/>`;
+        xml += `   <soapenv:Body>`;
+        xml += `      <ser:doSelect>`;
+        xml += `         <sid>${sid}</sid>`;
+        xml += `         <objectType>acctyp</objectType>`;
+        xml += `         <whereClause>id=${id}</whereClause>`;
+        xml += `         <maxRows>-1</maxRows>`;
+        xml += `         <attributes>`;
+        xml += `         <string>sym</string>`;
+        xml += `         </attributes>`;
+        xml += `      </ser:doSelect>`;
+        xml += `   </soapenv:Body>`;
+        xml += `</soapenv:Envelope>`;
+
+        try{
+            const post = await axios.post(HOST_SDM, xml, {
+                headers: { 'SOAPAction': 'http://www.ca.com/UnicenterServicePlus/ServiceDesk/USD_WebServiceSoap/doSelectRequest' }
+            });
+
+            const json = await Util.xmlToJson(Util.xPath('//doSelectReturn', post.data)[0]);
+            const attributes = {};
+            json.UDSObjectList.UDSObject[0].Attributes[0].Attribute.map(x => { attributes[x.AttrName[0]] = x.AttrValue[0] });
+
+            return attributes.sym;
+
+        }catch(e){
+            console.log(e.response)
+            return null;
         }
     }
 
