@@ -252,6 +252,7 @@ class ServiceDesk {
     }
 
     static async GetCategoryById(sid, id){
+        id = id.replace(/\D+/g, '');
         let xml = '';
         xml += `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://www.ca.com/UnicenterServicePlus/ServiceDesk">`;
         xml += `   <soapenv:Header/>`;
