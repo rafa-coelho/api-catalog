@@ -122,7 +122,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
               
-        const where = (query.where) ? `(${query.where}) AND deleted = 0` : "deleted = 0";
+        const where = (query.where) ? `(${query.where})` : "";
         const order_by = (query.order_by) ? query.order_by : "";
         const limit = (query.limit) ? query.limit : "";
 
@@ -154,7 +154,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
              
-        const where = `id = '${params.id}' AND deleted = 0`;
+        const where = `id = '${params.id}'`;
 
         const offering = await Offering.GetFirst(where);
 
@@ -165,7 +165,7 @@ module.exports = (app) => {
             return res.status(404).send(resp);
         }
 
-        const fields = await OfferingField.Get(`offering = '${offering.id}' AND deleted = 0`);
+        const fields = await OfferingField.Get(`offering = '${offering.id}'`);
 
         for (const field of fields) {
             const options = await OfferingFieldOption.Get(`field = '${field.id}'`);
@@ -203,7 +203,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
               
-        const where = `id = '${params.id}' AND deleted = 0`;
+        const where = `id = '${params.id}' `;
 
         const offering = await Offering.GetFirst(where);
 
@@ -312,7 +312,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
               
-        const where = `id = '${params.id}' AND deleted = 0`;
+        const where = `id = '${params.id}'`;
 
         const offering = await Offering.GetFirst(where);
 

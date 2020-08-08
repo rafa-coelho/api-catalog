@@ -47,7 +47,7 @@ module.exports = (app) => {
             ...body
         };
 
-        const optionExists = await OfferingFieldOption.Count(`(label = '${body.label}' OR value = '${body.label}') AND deleted = 0`) > 0;
+        const optionExists = await OfferingFieldOption.Count(`(label = '${body.label}' OR value = '${body.label}')`) > 0;
 
         if(optionExists){
             resp.errors.push({
@@ -92,7 +92,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const option = await OfferingFieldOption.GetFirst(`id = '${params.id}' AND deleted = 0`);
+        const option = await OfferingFieldOption.GetFirst(`id = '${params.id}'`);
 
         if(!option){
             resp.errors.push({
@@ -154,7 +154,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const option = await OfferingFieldOption.GetFirst(`id = '${params.id}' AND deleted = 0`);
+        const option = await OfferingFieldOption.GetFirst(`id = '${params.id}'`);
 
         if(!option){
             resp.errors.push({

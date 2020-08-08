@@ -42,7 +42,7 @@ module.exports = (app) => {
             return res.status(404).send(resp);
         }
 
-        const fieldNameExists = await OfferingField.GetFirst(`name = '${body.name}' AND offering = '${offering.id}' AND deleted = 0`);
+        const fieldNameExists = await OfferingField.GetFirst(`name = '${body.name}' AND offering = '${offering.id}'`);
 
         if(fieldNameExists){
             resp.errors.push({
@@ -121,7 +121,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const field = await OfferingField.GetFirst(`id = '${params.id}' AND deleted = 0`);
+        const field = await OfferingField.GetFirst(`id = '${params.id}'`);
 
         if(!field){
             resp.errors.push({
@@ -181,7 +181,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const field = await OfferingField.GetFirst(`id = '${params.id}' AND deleted = 0`);
+        const field = await OfferingField.GetFirst(`id = '${params.id}'`);
 
         if(!field){
             resp.errors.push({

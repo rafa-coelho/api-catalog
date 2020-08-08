@@ -13,7 +13,7 @@ class Session extends Classes
         if([ "", null ].includes(id)){
             response.msg = "A Session ID precisa ser informada!"
         }else{
-            const sessao = await this.GetFirst(`id = '${id}' AND deleted = 0`);
+            const sessao = await this.GetFirst(`id = '${id}'`);
 
             if(!sessao){
                 response.msg = "Sessão inválida!";

@@ -51,7 +51,7 @@ module.exports = (app) => {
             return res.status(400).send(resp);
         }
 
-        const offering = await Offering.GetFirst(`id = '${body.offering}' AND deleted = 0`);
+        const offering = await Offering.GetFirst(`id = '${body.offering}'`);
 
         if (!offering) {
             resp.errors.push({
