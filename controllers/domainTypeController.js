@@ -10,7 +10,6 @@ module.exports = (app) => {
         };
 
         const session = await Session.Validar(headers['authorization'], 'post.DomainType');
-        return res.send(session)
 
         if (!session.status) {
             resp.errors.push({
