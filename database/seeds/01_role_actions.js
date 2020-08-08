@@ -1,5 +1,6 @@
-exports.seed = function (knex) {
-    return knex('role_permission').insert([
+module.exports = {
+    table: "role_permission",
+    values: [
         { id: "2e5bd04f-7845-41f6-93ef-fa709b24272e", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "post.login" },
         { id: "e6bcdaf5-91f2-48eb-b539-66a46066aca7", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "post.logout" },
         { id: "410d5558-3550-47e1-8c68-27b452cddaff", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "post.DomainType" },
@@ -31,5 +32,5 @@ exports.seed = function (knex) {
         { id: "4275f1c3-d8c5-4e08-b022-5371c699d7fd", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "get.request" },
         { id: "357f89fa-ff41-4301-86f2-24cd820e2500", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "put.request" },
         { id: "57706094-5118-4219-a355-374a2f56a2c9", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "delete.request" }
-    ]);
-};
+    ]
+}

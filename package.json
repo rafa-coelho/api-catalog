@@ -28,8 +28,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "migrate": "node ./database/migrate.js",
-    "rollback": "node ./database/rollback.js",
-    "seed": "node ./database/seed.js"
+    "rollback": "node ./database/rollback.js"
   },
   "author": "",
   "license": "ISC"
