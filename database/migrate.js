@@ -1,8 +1,7 @@
 global.PROD = process.env.NODE_ENV == 'prod';
 const fs = require('fs');
 const path = require('path');
-const knex = require('./connection');
-const e = require('express');
+const database = require('./connection');
 
 const migrationsDir = path.join(__dirname, 'migrations');
 
@@ -22,8 +21,6 @@ const migrate = async () => {
             console.log(e);
         }
     }
-
-
     
     const migrations = fs.readdirSync(migrationsDir);
 
@@ -31,7 +28,7 @@ const migrate = async () => {
         const migration = require(`${migrationsDir}/${file}`);
         let error = false;
         try{
-            await migration.up(knex, PROD);
+            await migration.up(database, PROD);
         }catch(E){
             error = true;
             // console.log(E);
@@ -42,7 +39,36 @@ const migrate = async () => {
     }
 
     console.log('Database generated successfully');
+    console.log();
+    console.log();
+    await seed();
     process.exit();
 }
+
+const seed = async () => {
+    const seedsDir = path.join(__dirname, 'seeds');
+    
+    const seeds = fs.readdirSync(seedsDir);
+
+    for (const file of seeds) {
+        const seed = require(`${seedsDir}/${file}`);
+        let error = false;
+        try {
+            const exists = (await database(seed.table).whereIn('id', seed.values.map(x => x.id))).length > 0;
+            if(!exists){
+                await database(seed.table).insert(seed.values)
+            }
+            
+        } catch (E) {
+            error = true;
+            console.log(E);
+        }
+        if (!error) {
+            console.log(`Runned ${file} successfully!`);
+        }
+    }
+
+    console.log('Done!');
+};
 
 migrate();

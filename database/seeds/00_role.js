@@ -1,5 +1,6 @@
-exports.seed = function (knex) {
-    return knex('role').insert([
+module.exports = {
+    table: "role",
+    values: [
         {
             id: "031df649-fe3f-461f-80f0-52b6da4d405f",
             name: "administrator",
@@ -12,6 +13,5 @@ exports.seed = function (knex) {
             label: "Usuário",
             description: "Perfil utilizado pelo usuário final"
         }
-    ]);
-
+    ]
 };
