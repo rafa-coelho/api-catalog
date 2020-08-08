@@ -1,7 +1,7 @@
 exports.up = async function (database, utf8 = false) {
     return database.schema.hasTable('domain_type').then(function (exists) {
         if (!exists)
-            return knex.schema.createTable("domain_type", table => {
+            return database.schema.createTable("domain_type", table => {
                 if (utf8)
                     table.collate('utf8_unicode_ci');
                 table.string('id', 45).primary();
