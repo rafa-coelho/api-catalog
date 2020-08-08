@@ -9,8 +9,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        // TODO: Create permission verification
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'post.DomainValue');
 
         if (!session.status) {
             resp.errors.push({
@@ -91,7 +90,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'get.DomainValue');
 
         if (!session.status) {
             resp.errors.push({
@@ -122,7 +121,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'get.DomainValue');
 
         if (!session.status) {
             resp.errors.push({
@@ -161,7 +160,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'get.DomainValue');
 
         if (!session.status) {
             resp.errors.push({
@@ -200,7 +199,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'get.DomainValue');
 
         if (!session.status) {
             resp.errors.push({
@@ -234,8 +233,7 @@ module.exports = (app) => {
             errors: []
         };
 
-        // TODO: Create permission verification
-        const session = await Session.Validar(headers['authorization']);
+        const session = await Session.Validar(headers['authorization'], 'put.DomainValue');
 
         if (!session.status) {
             resp.errors.push({
