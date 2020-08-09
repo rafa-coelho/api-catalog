@@ -55,30 +55,10 @@ module.exports = (app) => {
             if (contactExists) {
                 user.id = contactExists.id;
                 user.password = Crypto.Encrypt(body.password, user.id);
-                await User.Update(user, `id = '${contactExists.id}'`);
+                User.Update(user, `id = '${contactExists.id}'`);
             } else {
-                const createUser = await User.Create(user);
-
-                if (createUser.status === 1) {
-                    const roles = [];
-
-                    if (user.access_type.toLowerCase().startsWith('admin')) {
-                        const adminRole = await Role.GetFirst(`name = 'administrator'`);
-                        roles.push(adminRole.id);
-                    }
-
-                    const userRole = await Role.GetFirst(`name = 'user'`);
-
-                    roles.push(userRole.id);
-
-                    roles.forEach(roleId => {
-                        UserRole.Create({
-                            id: Util.generateId(),
-                            user: user.id,
-                            role: roleId
-                        });
-                    });
-                }
+                User.Create(user);
+                UserPermission.CreateUserPermission(user.id, user.access_type);
             }
 
             userid = user.id;
@@ -130,10 +110,10 @@ module.exports = (app) => {
         };
 
         const session = await Session.GetFirst(`id = '${headers['authorization']}'`);
-        
-        if(session){
+
+        if (session) {
             const logout = await Session.Delete(`ìd = '${headers['authorization']}'`);
-            if(logout.status !== 1){
+            if (logout.status !== 1) {
                 resp.errors.push({
                     msg: "Erro ao realizar logout!"
                 });
