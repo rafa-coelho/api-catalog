@@ -1,4 +1,4 @@
-const knex = require('../database/connection');
+const database = require('../database/connection');
 
 class DB
 {
@@ -30,7 +30,7 @@ class DB
             }
         }
 
-        const data = await knex(this.table)
+        const data = await database(this.table)
             .whereRaw(where)
             .orderByRaw(order_by)
             .limit(limit)
@@ -54,7 +54,7 @@ class DB
             }
         }
 
-        return await knex(this.table).insert(obj);
+        return await database(this.table).insert(obj);
     }
     
     async Update(callback){
@@ -74,7 +74,7 @@ class DB
             }
         }
 
-        return await knex(this.table)
+        return await database(this.table)
             .whereRaw(where)
             .update(obj);
     }
@@ -82,7 +82,7 @@ class DB
     async Delete(){
         const where = (this.where != "" && this.where != undefined) ? `(${this.where}) AND deleted = 0` : "deleted = 0";
 
-        return await knex(this.table)
+        return await database(this.table)
             .whereRaw(where)
             .del();
     }
@@ -92,7 +92,7 @@ class DB
     }
 
     async Query(query){
-        return await knex.raw(query);
+        return await database.raw(query);
     }
 
 }
