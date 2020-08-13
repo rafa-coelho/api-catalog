@@ -1,5 +1,5 @@
 exports.up = async function (database, utf8 = false) {
-    return database.schema.hasTable('users').then(function (exists) {
+    return database.schema.hasTable('user').then(function (exists) {
         if (!exists)
             return database.schema.createTable("user", table => {
                 if (utf8)
@@ -20,7 +20,7 @@ exports.up = async function (database, utf8 = false) {
 }
 
 exports.down = async function (database) {
-    return database.schema.hasTable('users').then(function (exists) {
+    return database.schema.hasTable('user').then(function (exists) {
         if (exists)
             return database.schema.dropTable('user');
     });
