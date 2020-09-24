@@ -26,59 +26,19 @@ module.exports = (app) => {
         let userid = '';
 
         if (!usernameExists) {
-            const login = await ServiceDesk.Login(body.username, body.password);
+            resp.errors.push({
+                msg: 'Usuário não encontrado'
+            });
+            return res.status(403).send(resp);
+        }
 
-            if (login.status !== 1) {
-                resp.errors.push({
-                    msg: 'Erro ao realizar login'
-                });
-                return res.status(401).send(resp);
-            }
+        userid = usernameExists.id;
 
-            const contact = await ServiceDesk.GetContact(login.data, body.username);
-
-            if (contact.status !== 1) {
-                resp.errors.push({
-                    msh: "Erro ao encontrar usuário no Service Desk"
-                });
-                return res.status(500).send(resp);
-            }
-
-            const user = {
-                id: Util.generateId(),
-                ...contact.data
-            };
-
-            user.password = Crypto.Encrypt(body.password, user.id);
-
-            const contactExists = await User.GetFirst(`external_id = '${user.external_id}'`);
-            if (contactExists) {
-                user.id = contactExists.id;
-                user.password = Crypto.Encrypt(body.password, user.id);
-                User.Update(user, `id = '${contactExists.id}'`);
-            } else {
-                User.Create(user);
-                UserPermission.CreateUserPermission(user.id, user.access_type);
-            }
-
-            userid = user.id;
-        } else {
-            userid = usernameExists.id;
-
-            if (Crypto.Decrypt(usernameExists.password, usernameExists.id) !== body.password) {
-                resp.errors.push({
-                    msg: "Senha incorreta!"
-                });
-                return res.status(401).send(resp);
-            }
-
-            const login = await ServiceDesk.Login(body.username, body.password);
-            if (login.status !== 1) {
-                resp.errors.push({
-                    msg: 'Erro ao realizar login'
-                });
-                return res.status(401).send(resp);
-            }
+        if (Crypto.Decrypt(usernameExists.password, usernameExists.id) !== body.password) {
+            resp.errors.push({
+                msg: "Senha incorreta!"
+            });
+            return res.status(401).send(resp);
         }
 
         const session = {
