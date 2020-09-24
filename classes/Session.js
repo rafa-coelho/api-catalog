@@ -19,7 +19,7 @@ class Session extends Classes
                 response.msg = "Sessão inválida!";
             }else{
                 const userRoles = await UserRole.Get(`user = '${sessao.user}'`);
-                const hasPermission = (await UserPermission.Count(`user = '${sessao.user}' AND action = '${action}'`)) > 0;
+                const hasPermission = (await RolePermission.Count(`role in ('${userRoles.map(x => x.id).join(`', '`) }') AND action = '${action}'`)) > 0;
 
                 if(!hasPermission){
                     response.msg = "Você não tem permissão para realizar esta ação!"
