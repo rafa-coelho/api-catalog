@@ -10,11 +10,11 @@ app.use(cors());
 app.use(expressValidator());
 
 global.PROD = process.env.NODE_ENV === 'prod'
-global.HOST_SDM = "https://dessdm-por.sonda.com:8080/axis/services/USD_R11_WebService";
 
 const consign = require('consign');
 
 const fs = require("fs");
+
 const directories = ["utils", "classes"];
 directories.forEach(dir => {
     try {
@@ -30,10 +30,9 @@ directories.forEach(dir => {
 
 consign().include('controllers').into(app);
 
-app.listen(3333, () => {
+app.listen(3333, async () => {
     console.log("--------------------------------------------");
     for (let index = 0; index < 10; index++) console.log("\n");
     console.clear();
     console.log("Rodando na porta 3333");
 });
-
