@@ -32,10 +32,10 @@ module.exports = {
         { id: "4275f1c3-d8c5-4e08-b022-5371c699d7fd", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "get.request" },
         { id: "357f89fa-ff41-4301-86f2-24cd820e2500", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "put.request" },
         { id: "57706094-5118-4219-a355-374a2f56a2c9", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "delete.request" },
-        { id: "384a0393-e361-4cff-8d28-b44d512abdc1", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "get.group" },
-        { id: "47eea67f-c8c9-4749-bb71-8acbeaa80ac6", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "post.group" },
-        { id: "bd05847c-cb80-4a34-a4e9-1b650dd94b57", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "delete.group" },
-        { id: "08bf00f5-e3c5-4ca0-9f83-f679d0e3e498", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "put.group" },
-        { id: "b2b07c31-6f15-4cab-8109-bdb7f74dce51", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "get.group" },
+        { id: "384a0393-e361-4cff-8d28-b44d512abdc1", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "get.company" },
+        { id: "47eea67f-c8c9-4749-bb71-8acbeaa80ac6", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "post.company" },
+        { id: "bd05847c-cb80-4a34-a4e9-1b650dd94b57", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "delete.company" },
+        { id: "08bf00f5-e3c5-4ca0-9f83-f679d0e3e498", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "put.company" },
+        { id: "b2b07c31-6f15-4cab-8109-bdb7f74dce51", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "get.company" },
     ]
 }

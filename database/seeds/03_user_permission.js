@@ -156,9 +156,9 @@ module.exports = {
             user: '4c30d8b0-fea5-11ea-9e9d-6fe810a04eb9',
             action: 'post.request'
         },
-        { id: "26720327-630a-4d76-ba0c-d905c4548295", user: "4c30d8b0-fea5-11ea-9e9d-6fe810a04eb9", action: "get.group" },
-        { id: "cd0ba409-4813-4229-8173-67b78ef8f1c6", user: "4c30d8b0-fea5-11ea-9e9d-6fe810a04eb9", action: "post.group" },
-        { id: "3ee742fb-b2a3-4bd4-9ff1-4e74fd27bdc9", user: "4c30d8b0-fea5-11ea-9e9d-6fe810a04eb9", action: "delete.group" },
-        { id: "e92538a3-7b31-4c0f-9b65-5ee40129564a", user: "4c30d8b0-fea5-11ea-9e9d-6fe810a04eb9", action: "put.group" }
+        { id: "26720327-630a-4d76-ba0c-d905c4548295", user: "4c30d8b0-fea5-11ea-9e9d-6fe810a04eb9", action: "get.company" },
+        { id: "cd0ba409-4813-4229-8173-67b78ef8f1c6", user: "4c30d8b0-fea5-11ea-9e9d-6fe810a04eb9", action: "post.company" },
+        { id: "3ee742fb-b2a3-4bd4-9ff1-4e74fd27bdc9", user: "4c30d8b0-fea5-11ea-9e9d-6fe810a04eb9", action: "delete.company" },
+        { id: "e92538a3-7b31-4c0f-9b65-5ee40129564a", user: "4c30d8b0-fea5-11ea-9e9d-6fe810a04eb9", action: "put.company" }
     ]
 };
