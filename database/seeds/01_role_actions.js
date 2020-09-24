@@ -35,7 +35,6 @@ module.exports = {
         { id: "384a0393-e361-4cff-8d28-b44d512abdc1", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "get.company" },
         { id: "47eea67f-c8c9-4749-bb71-8acbeaa80ac6", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "post.company" },
         { id: "bd05847c-cb80-4a34-a4e9-1b650dd94b57", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "delete.company" },
-        { id: "08bf00f5-e3c5-4ca0-9f83-f679d0e3e498", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "put.company" },
-        { id: "b2b07c31-6f15-4cab-8109-bdb7f74dce51", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "get.company" },
+        { id: "08bf00f5-e3c5-4ca0-9f83-f679d0e3e498", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "put.company" }
     ]
 }
