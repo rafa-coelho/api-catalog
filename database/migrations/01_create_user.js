@@ -5,7 +5,7 @@ exports.up = async function (database, utf8 = false) {
                 if (utf8)
                     table.collate('utf8_unicode_ci');
                 table.string('id', 45).primary();
-                table.string('external_id', 80).notNullable();
+                table.string('external_id', 80);
                 table.string('name', 80).notNullable();
                 table.string('email', 80).notNullable();
                 table.string('username', 80).notNullable();
