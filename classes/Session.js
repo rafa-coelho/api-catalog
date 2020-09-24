@@ -19,15 +19,17 @@ class Session extends Classes
                 response.msg = "Sessão inválida!";
             }else{
                 const userRoles = await UserRole.Get(`user = '${sessao.user}'`);
-                const hasPermission = (await RolePermission.Count(`role in ('${userRoles.map(x => x.id).join(`', '`) }') AND action = '${action}'`)) > 0;
-
+                const roles = await Role.Get(`id in ('${userRoles.map(x => x.role).join(`', '`) }')`);
+                                
+                const hasPermission = (await RolePermission.Count(`role in ('${roles.map(x => x.id).join(`', '`) }') AND action = '${action}'`)) > 0;
+                
                 if(!hasPermission){
                     response.msg = "Você não tem permissão para realizar esta ação!"
                 }else{
-                    response.status = 1
+                    response.status = 1;
                     response.data = { 
                         ...sessao,
-                        roles: (await Role.Get(`id in ('${userRoles.map(x => x.role).join(`', '`) }')`)).map(x => x.name)
+                        roles: roles.map(x => x.name)
                     };
                 }
             }
