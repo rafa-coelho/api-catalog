@@ -11,6 +11,7 @@ exports.up = async function (database, utf8 = false) {
                 table.string('username', 80).notNullable();
                 table.string('password', 80).notNullable();
                 table.string('access_type', 80);
+                table.string('company', 40);
                 table.string('status', 25);
                 table.integer('deleted').defaultTo(0);
             });
