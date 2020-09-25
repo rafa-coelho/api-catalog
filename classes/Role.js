@@ -8,6 +8,14 @@ class Role extends Classes {
         return (await Role.Get(`id in ('${userRoles.map(x => x.role).join(`', '`)}')`)).map(x => x.name);
     }
 
+    static async AddUserRole(userId, roleId){
+        return (await UserRole.Create({
+            id: Util.generateId(),
+            user: userId,
+            role: roleId
+        })).status === 1;
+    }
+
 }
 
 module.exports = Role;

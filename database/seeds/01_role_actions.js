@@ -35,12 +35,12 @@ module.exports = {
         { id: "384a0393-e361-4cff-8d28-b44d512abdc1", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "get.company" },
         { id: "47eea67f-c8c9-4749-bb71-8acbeaa80ac6", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "post.company" },
         { id: "bd05847c-cb80-4a34-a4e9-1b650dd94b57", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "delete.company" },
-        { id: "08bf00f5-e3c5-4ca0-9f83-f679d0e3e498", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "put.company" }
         { id: "08bf00f5-e3c5-4ca0-9f83-f679d0e3e498", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "put.company" },
         { id: "a17ccf2a-1719-45f0-9063-1b000ffdaba4", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "post.user" },
         { id: "d20bf297-3b7e-457b-a27f-dd2e547f4f9c", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "put.user" },
         { id: "4fb6dfbb-76f3-4950-b17a-a6f0db673d66", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "get.user" },
         { id: "f1daf58c-993b-42cc-9ed9-ef1ecd472522", role: "031df649-fe3f-461f-80f0-52b6da4d405f", action: "delete.user" },
         { id: "cbc46c4a-26f0-45cc-a361-734ec8ea5546", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "get.user" },
+        { id: "c14fe678-b4aa-4659-bbaa-981bd912541e", role: "249cef4e-ae7c-4185-b45f-5816d9f827df", action: "put.user" },
     ]
 }
