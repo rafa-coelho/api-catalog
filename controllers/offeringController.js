@@ -33,27 +33,6 @@ module.exports = (app) => {
         if (resp.errors.length > 0) {
             return res.status(400).send(resp);
         }
-        
-        if(body.external_id){
-            const ext_sid = await User.ExternalLogin(session.data.user);
-            
-            if(ext_sid.status !== 1){
-                resp.errors.push({
-                    msg: "Erro ao verificar categoria externa."
-                });
-                return res.status(403).send(resp);
-            }
-            
-            const externalExists = await ServiceDesk.GetCategoryById(ext_sid.data, body.external_id);
-
-            if(!externalExists){
-                resp.errors.push({
-                    msg: "Categoria externa não encontrada"
-                });
-                return res.status(404).send(resp);
-            }
-
-        }
 
         const data = {
             id: Util.generateId(),
