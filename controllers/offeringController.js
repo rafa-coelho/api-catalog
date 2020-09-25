@@ -142,12 +142,14 @@ module.exports = (app) => {
             });
             return res.status(403).send(resp);
         }
-              
+        
+        const user = await User.GetFirst(`id = '${session.data.user}'`);
+
         const where = (query.where) ? `(${query.where})` : "";
         const order_by = (query.order_by) ? query.order_by : "";
         const limit = (query.limit) ? query.limit : "";
 
-        const offerings = await Offering.Get(where, order_by, limit);
+        const offerings = await Offering.Get( `${(user.company) ? `company = '${user.company}' ${(where !== "") ? ' AND' : ''}` : '' } ${where}`, order_by, limit);
 
         resp.data = offerings;
         resp.status = 1;
