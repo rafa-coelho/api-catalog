@@ -232,7 +232,7 @@ module.exports = (app) => {
         }
 
         // status 2 == "to validate"
-        if(user.status !== 2){
+        if(Number(user.status) !== 2){
             resp.errors.push({
                 msg: "Esse usuário já possui uma senha"
             });

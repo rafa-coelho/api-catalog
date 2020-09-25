@@ -48,6 +48,7 @@ module.exports = (app) => {
             id: Util.generateId(),
             name: body.name,
             external_id: body.external_id,
+            company: body.company,
             fields: body.fields.map(field => {
                 const obrigatorios = ['name', 'label', 'type'];
 
@@ -132,13 +133,16 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
         
+        
         const user = await User.GetFirst(`id = '${session.data.user}'`);
-
-        const where = (query.where) ? `(${query.where})` : "";
+        let where = (query.where) ? `(${query.where})` : "";
+        where += (user.company) ?  ((where !== "") ? " AND " : "")  + `company = '${user.company}'` : '';
+        console.log (where)
+        
         const order_by = (query.order_by) ? query.order_by : "";
         const limit = (query.limit) ? query.limit : "";
 
-        const offerings = await Offering.Get( `${(user.company) ? `company = '${user.company}' ${(where !== "") ? ' AND' : ''}` : '' } ${where}`, order_by, limit);
+        const offerings = await Offering.Get(where, order_by, limit);
 
         resp.data = offerings;
         resp.status = 1;
@@ -167,7 +171,7 @@ module.exports = (app) => {
         }
         
         const user = await User.GetFirst(`id = '${session.data.user}'`);
-        const where = `id = '${params.id}'` + (user.company) ? ` AND company = '${user.company}'` : ''; 
+        const where = `id = '${params.id}' ${(user.company) ? `AND company = '${user.company}'` : ''}`; 
 
         const offering = await Offering.GetFirst(where);
 
@@ -217,7 +221,7 @@ module.exports = (app) => {
         }
         
         const user = await User.GetFirst(`id = '${session.data.user}'`);
-        const where = `id = '${params.id}'` + (user.company) ? ` AND company = '${user.company}'` : ''; 
+        const where = `id = '${params.id}' ${(user.company) ? `AND company = '${user.company}'` : ''}`; 
 
         const offering = await Offering.GetFirst(where);
 
@@ -327,7 +331,7 @@ module.exports = (app) => {
         }
               
         const user = await User.GetFirst(`id = '${session.data.user}'`);
-        const where = `id = '${params.id}'` + (user.company) ? ` AND company = '${user.company}'` : ''; 
+        const where = `id = '${params.id}' ${(user.company) ? `AND company = '${user.company}'` : ''}`; 
 
         const offering = await Offering.GetFirst(where);
 
