@@ -108,7 +108,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const obrigatorios = [ 'name', 'email', 'username', 'roles', 'link' ];;
+        const obrigatorios = [ 'name', 'email', 'username', 'roles', 'link' ];
 
         obrigatorios.forEach(campo => {
             req.assert(campo, `O campo '${campo}' é obrigatório!`).notEmpty();
@@ -157,6 +157,16 @@ module.exports = (app) => {
             return res.status(400).send(resp);
         }
 
+        if(body.company){
+            const company = await Company.GetFirst(`id = '${body.company}'`);
+            if(!company){
+                resp.errors.push({
+                    msg: "Empresa não encontrada"
+                });
+                return res.status(400).send(resp);
+            }
+        }
+
         const id = Util.generateId();
         const payload = {
             id: id,
@@ -180,7 +190,7 @@ module.exports = (app) => {
 
         body.roles.forEach(async role => {
             await Role.AddUserRole(payload.id, role);
-        })
+        });
 
         // Create template
         const mail = new Mailer();
@@ -194,4 +204,5 @@ module.exports = (app) => {
         resp.data = payload;
         res.send(resp);
     });
+
 };
