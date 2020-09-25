@@ -34,6 +34,16 @@ module.exports = (app) => {
             return res.status(400).send(resp);
         }
 
+        if(body.company){
+            const company = await Company.GetFirst(`id = '${body.company}'`);
+            if(!company){
+                resp.errors.push({
+                    msg: "A Empresa não existe"
+                });
+                return res.status(400).send(resp);
+            }
+        }
+
         const data = {
             id: Util.generateId(),
             name: body.name,
