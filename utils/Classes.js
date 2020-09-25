@@ -3,7 +3,9 @@ class Classes
 
     static async Count(where){
         const db = new DB(this.table);
-        return (await db.Query(`SELECT count(*) FROM ${this.table} WHERE ${where}`))[0]["count(*)"];
+        return (where) 
+            ?  (await db.Query(`SELECT count(*) FROM ${this.table} WHERE ${where}`))[0]["count(*)"]
+            : (await db.Query(`SELECT count(*) FROM ${this.table} `))[0]["count(*)"];
     }
 
     static async Get(where, order_by = "", limit = ""){
