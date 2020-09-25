@@ -137,7 +137,6 @@ module.exports = (app) => {
         const user = await User.GetFirst(`id = '${session.data.user}'`);
         let where = (query.where) ? `(${query.where})` : "";
         where += (user.company) ?  ((where !== "") ? " AND " : "")  + `company = '${user.company}'` : '';
-        console.log (where)
         
         const order_by = (query.order_by) ? query.order_by : "";
         const limit = (query.limit) ? query.limit : "";

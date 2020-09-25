@@ -1,5 +1,4 @@
-const axios = require('axios').default;
-
+const db = require('../database/connection');
 module.exports = (app) => {
 
     // [POST] => /request
@@ -51,7 +50,8 @@ module.exports = (app) => {
             return res.status(400).send(resp);
         }
 
-        const offering = await Offering.GetFirst(`id = '${body.offering}'`);
+        const user = await User.GetFirst(`id = '${session.data.user}'`);
+        const offering = await Offering.GetFirst(`id = '${body.offering}' ${(user.company) ? `AND company = '${user.company}'` : ''} `);
 
         if (!offering) {
             resp.errors.push({
@@ -115,12 +115,38 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const where = (query.where) ? `AND (${query.where})` : "";
-        const order_by = (query.order_by) ? query.order_by : "";
-        const limit = (query.limit) ? query.limit : "";
+        const user = await User.GetFirst(`id = '${session.data.user}'`);
 
-        const requests = await Request.Get(`user = '${session.data.user}' ${where}`, order_by, limit);
+        let requests = [];
+        
+        let where = (query.where) ? query.where : "";
+        const order_by = (query.order_by) ? query.order_by : "created_at";
+        let limit = (query.limit) ? query.limit : '';
 
+        if(user.company){
+            where = `${(where) ? `${where} AND` : ''} ${Request.table}.deleted = 0 ${(user.company) ? `AND ${Offering.table}.company = '${user.company}'` : ''}`;
+            
+            limit = (limit) ? limit : 1000000;
+            let offset = 0;
+            
+            if(limit){
+                if(limit.toString().indexOf(',') >= 0){
+                    offset = limit.split(',')[0].replace(/\D+/g, '')
+                    limit = limit.split(',')[1].replace(/\D+/g, '')
+                }
+            }
+    
+            requests = await db(Request.table)
+                .join(Offering.table, `${Offering.table}.id`, `${Request.table}.offering`)
+                .select(Request.fields.map(x => `${Request.table}.${x}`))
+                .whereRaw(where)
+                .orderByRaw(order_by)
+                .limit(limit)
+                .offset(offset);
+        }else{
+            requests = await Request.Get(where, order_by, limit);
+        }
+        
         resp.status = 1;
         resp.data = requests;
         res.send(resp);
@@ -185,6 +211,7 @@ module.exports = (app) => {
         }
 
         const request = await Request.GetFirst(`user = '${session.data.user}' AND id = '${params.id}'`);
+
 
         if (!request) {
             resp.errors.push({
