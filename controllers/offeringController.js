@@ -165,8 +165,9 @@ module.exports = (app) => {
             });
             return res.status(403).send(resp);
         }
-             
-        const where = `id = '${params.id}'`;
+        
+        const user = await User.GetFirst(`id = '${session.data.user}'`);
+        const where = `id = '${params.id}'` + (user.company) ? ` AND company = '${user.company}'` : ''; 
 
         const offering = await Offering.GetFirst(where);
 
@@ -214,8 +215,9 @@ module.exports = (app) => {
             });
             return res.status(403).send(resp);
         }
-              
-        const where = `id = '${params.id}' `;
+        
+        const user = await User.GetFirst(`id = '${session.data.user}'`);
+        const where = `id = '${params.id}'` + (user.company) ? ` AND company = '${user.company}'` : ''; 
 
         const offering = await Offering.GetFirst(where);
 
@@ -324,7 +326,8 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
               
-        const where = `id = '${params.id}'`;
+        const user = await User.GetFirst(`id = '${session.data.user}'`);
+        const where = `id = '${params.id}'` + (user.company) ? ` AND company = '${user.company}'` : ''; 
 
         const offering = await Offering.GetFirst(where);
 
