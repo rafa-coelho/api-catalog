@@ -205,4 +205,51 @@ module.exports = (app) => {
         res.send(resp);
     });
 
+    // [PUT] => /user/:id/password
+    app.put(`/user/:id/password`, async (req, res) => {
+        const { body, params } = req;
+        const resp = {
+            status: 0,
+            msg: "",
+            errors: []
+        };
+        
+        req.assert('password', `O campo 'password' é obrigatório!`).notEmpty();
+
+        resp.errors = req.validationErrors() || [];
+       
+        if (resp.errors.length > 0) {
+            return res.status(400).send(resp);
+        }
+
+        const user = await User.GetFirst(`id = '${params.id}'`);
+
+        if(!user){
+            resp.errors.push({
+                msg: "Usuário não encontrado!"
+            });
+            return res.status(400).send(resp);
+        }
+
+        // status 2 == "to validate"
+        if(user.status !== 2){
+            resp.errors.push({
+                msg: "Esse usuário já possui uma senha"
+            });
+            return res.status(400).send(resp);
+        }
+
+        const update = await User.Update({ password: Crypto.Encrypt(body.password, params.id), status: 1 }, `id = '${params.id}'`);
+        if(update.status !== 1){
+            resp.errors.push({
+                msg: "Erro ao criar senha"
+            });
+            return res.status(500).send(resp);
+        }
+
+        resp.status = 1;
+        resp.msg = "Senha criada com sucesso!";
+        res.send(resp);
+    });
+
 };
