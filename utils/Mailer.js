@@ -34,7 +34,7 @@ class Mailer{
                     });
                 }
             });
-    
+            
             if(errors.length > 0){
                 reject({
                     errors: errors,
@@ -49,7 +49,6 @@ class Mailer{
                 subject: this.subject,
                 html: this.message
             };
-            
             this.transporter.sendMail(mailOptions, function(error, info){
                 if (error) {
                     resolve(error);
@@ -82,6 +81,29 @@ class Mailer{
         mail += `   </body>`;
         mail += `</html>`;
         return mail;
+    }
+
+    static NovaSolicitacao(user, link){
+        let email = '';
+        email += `<html>`;
+        email += `    <body style="width:600px; height: 100%; margin:0; padding:10;font-family:Circular, Helvetica, Arial, sans-serif; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto;">`;
+        email += `        <div style="width: 100%; height: 80px; background-color: #3C8DBC; line-height: 80px; text-align: center;">`;
+        email += `            <span style="color:white;font-size:1.5em"> <b>Lead</b>This - Catalog </span>`;
+        email += `        </div>`;
+        email += `        <div style="width: 100%; height: 300px; margin-top: 1em">`;
+        email += `            <div style="width: 80%; height: 200px; background-color:white; text-align: center; padding: 25px 10%">`;
+        email += `                <h2 style="border:none;margin:0px;padding:0px;text-decoration:none;color:rgb(0, 0, 0);font-size:1.5em;font-weight:bold;line-height:45px;letter-spacing:-0.04em;text-align:center">`;
+        email += `                    Olá, ${user.name}!</h2>`;
+        email += `                <p style="font-size: 1.5em;">Tem uma nova solicitação no Catalog!: <a href="${link}">Clique aqui</a> </p>`;
+        email += `            </div>`;
+        email += `            <div style="width:100%; text-align: center;  min-height: 30px; background-color: #F7F7F7; padding: 5px 0 5px 20px">`;
+        email += `                <p style="color: #88898C; font-size: 1em;"><b>Lead</b>This - Catalog</p>`;
+        email += `                <p><small style="color: #ddd;">by Lumine - 2020</small></p>`;
+        email += `            </div>`;
+        email += `        </div>`;
+        email += `    </body>`;
+        email += `</html>`;
+        return email;
     }
 }
 

@@ -22,7 +22,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const obrigatorios = ["offering", "summary", "fields"];
+        const obrigatorios = ["offering", "summary", "fields", "link" ];
 
         obrigatorios.forEach(campo => {
             req.assert(campo, `O campo '${campo}' é obrigatório!`).notEmpty();
@@ -87,6 +87,19 @@ module.exports = (app) => {
 
         });
 
+        // Notificar Administradores
+        const admins = await User.Get(`company is NULL AND id != '${session.data.user}'`);
+
+        admins.forEach(async admin => {
+            const roles = await Role.GetUserRoles(admin.id);
+            if(roles.find(x => x.toLowerCase().indexOf("admin") >= 0)){
+                const mail = new Mailer();
+                mail.to = admin.email;
+                mail.subject = "LT Catalog - Nova solicitação";
+                mail.message = Mailer.NovaSolicitacao(admin, body.link + payload.id);
+                mail.Send();
+            }
+        });
 
         resp.status = 1;
         resp.msg = "Solicitação criada com sucesso!";
