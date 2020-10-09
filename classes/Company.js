@@ -1,7 +1,7 @@
 class Company extends Classes{
 
     static table = 'company';
-    static fields = [ 'id', 'name' ];
+    static fields = [ 'id', 'name', 'code' ];
 
 }
 

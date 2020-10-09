@@ -6,6 +6,7 @@ exports.up = async function (database, utf8 = false) {
                     table.collate('utf8_unicode_ci');
                 table.string('id', 45).primary();
                 table.string('name', 80).notNullable();
+                table.string('code', 10).notNullable();
                 table.integer('deleted').defaultTo(0);
             });
     });
