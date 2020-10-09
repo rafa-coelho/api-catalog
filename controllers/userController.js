@@ -108,7 +108,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const obrigatorios = [ 'name', 'email', 'username', 'roles', 'link' ];
+        const obrigatorios = [ 'name', 'email', 'roles', 'link' ];
 
         obrigatorios.forEach(campo => {
             req.assert(campo, `O campo '${campo}' é obrigatório!`).notEmpty();

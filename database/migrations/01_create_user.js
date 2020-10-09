@@ -8,7 +8,6 @@ exports.up = async function (database, utf8 = false) {
                 table.string('external_id', 80);
                 table.string('name', 80).notNullable();
                 table.string('email', 80).notNullable();
-                table.string('username', 80).notNullable();
                 table.string('password', 80).notNullable();
                 table.string('access_type', 80);
                 table.string('company', 40);
