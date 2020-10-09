@@ -8,8 +8,16 @@ require('dotenv').config();
 app.use(express.json());
 app.use(cors());
 app.use(expressValidator());
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+    res.header('Access-Control-Expose-Headers', '*');
+    // res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+    next();
+});
 
-global.PROD = process.env.NODE_ENV === 'prod'
+global.PROD = process.env.NODE_ENV === 'prod';
 
 const consign = require('consign');
 
