@@ -10,7 +10,7 @@ module.exports = (app) => {
 
         const { body } = req;
 
-        const obrigatorios = ['username', 'password'];
+        const obrigatorios = ['email', 'password'];
 
         obrigatorios.forEach(campo => {
             req.assert(campo, `O campo '${campo}' é obrigatório!`).notEmpty();
@@ -22,19 +22,19 @@ module.exports = (app) => {
             return res.status(400).send(resp);
         }
 
-        const usernameExists = await User.GetFirst(`username = '${body.username}'`);
+        const emailExists = await User.GetFirst(`email = '${body.email}'`);
         let userid = '';
 
-        if (!usernameExists) {
+        if (!emailExists) {
             resp.errors.push({
                 msg: 'Usuário não encontrado'
             });
             return res.status(403).send(resp);
         }
 
-        userid = usernameExists.id;
+        userid = emailExists.id;
 
-        if (Crypto.Decrypt(usernameExists.password, usernameExists.id) !== body.password) {
+        if (Crypto.Decrypt(emailExists.password, emailExists.id) !== body.password) {
             resp.errors.push({
                 msg: "Senha incorreta!"
             });
@@ -252,4 +252,32 @@ module.exports = (app) => {
         res.send(resp);
     });
 
+
+    // [GET] => /user/profile
+    app.get(`/user/profile`, async (req, res) => {
+        const { headers, body } = req;
+        const resp = {
+            status: 0,
+            msg: "",
+            data: null,
+            errors: []
+        };
+
+        const session = await Session.Validar(headers['authorization'], 'get.user');
+
+        if (!session.status) {
+            resp.errors.push({
+                location: "header",
+                param: "Authorization",
+                msg: session.msg
+            });
+            return res.status(403).send(resp);
+        }
+
+        const user = await User.GetFirst(`id = '${session.data.user}'`);
+
+        resp.status = user ? 1 : 0;
+        resp.data = user;
+        res.send(resp);
+    });
 };

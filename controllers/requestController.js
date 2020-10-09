@@ -155,11 +155,26 @@ module.exports = (app) => {
                 .whereRaw(where)
                 .orderByRaw(order_by)
                 .limit(limit)
-                .offset(offset);
+                .offset(offset)
+                // .count();
+
+            const count = await db(Request.table)
+                .join(Offering.table, `${Offering.table}.id`, `${Request.table}.offering`)
+                .select(Request.fields.map(x => `${Request.table}.${x}`))
+                .whereRaw(where)
+                .count(`${Request.table}.id AS CNT`);
+            
+            res.set("X-TOTAL-COUNT", count[0].CNT);
         }else{
             requests = await Request.Get(where, order_by, limit);
+            res.set("X-TOTAL-COUNT", await Request.Count(where));
         }
-        
+
+        for (let i = 0; i < requests.length; i++) {
+            const request = requests[i];
+            const offering = await Offering.GetFirst(`id = '${request.offering}'`);
+            requests[i].offering_name = offering.name;
+        }
         resp.status = 1;
         resp.data = requests;
         res.send(resp);
