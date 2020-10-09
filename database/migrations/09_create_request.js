@@ -6,6 +6,8 @@ exports.up = async function (database, utf8 = false) {
                     table.collate('utf8_unicode_ci');
                 table.string('id', 45).primary();
                 table.string('user', 45).notNullable();
+                table.string('analyst', 45);
+                table.string('code', 15).notNullable();
                 table.string('offering', 45).notNullable();
                 table.string('summary', 200);
                 table.string('status', 25);

@@ -2,7 +2,7 @@ class Request extends Classes
 {
     static entity = "req";
     static table = "request";
-    static fields = [ "id", "user", "offering", "summary", "status", "created_at", "updated_at" ];
+    static fields = [ "id", "user", "offering", "code", "analyst", "summary", "status", "created_at", "updated_at" ];
 
     static Create(data){
         data.status = 1;
