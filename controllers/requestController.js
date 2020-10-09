@@ -60,9 +60,18 @@ module.exports = (app) => {
             return res.status(404).send(resp);
         }
 
+        let code = "LT-";
+        if(offering.company){
+            const company = await Company.GetFirst(`id = '${offering.company}'`);
+            code = `${company.code}-`;
+        }
+
+        const last = (await db.raw(`SELECT * FROM ${Request.table} WHERE code like '%${code}%' ORDER BY code DESC`))[0];
+        const count = last ? Number(last.code.replace(/\D+/g, '')) + 1 : 1;
+
         const payload = {
             id: Util.generateId(),
-            status: "",
+            code: `${code}${count}`,
             user: session.data.user,
             ...body
         };
@@ -76,15 +85,12 @@ module.exports = (app) => {
             return res.status(500).send(resp);
         }
 
-
         body.fields.forEach(async field => {
-
             await RequestField.Create({
                 id: Util.generateId(),
                 request: payload.id,
                 ...field
             });
-
         });
 
         // Notificar Administradores
