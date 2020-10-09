@@ -212,6 +212,9 @@ module.exports = (app) => {
 
         request.fields = await RequestField.Get(`request = '${request.id}'`);
 
+        const offering = await Offering.GetFirst(`id = '${request.offering}'`);
+        request.offering_name = offering.name;
+
         resp.status = 1;
         resp.data = request;
         res.send(resp);
@@ -290,11 +293,13 @@ module.exports = (app) => {
             return res.status(500).send(resp);
         }
 
-        body.fields.forEach(field => RequestField.Update({ value: field.value }, `(id = '${field.id}' OR name = '${field.name}') AND request = '${params.id}'`));
+        if(body.fields){
+            body.fields.forEach(field => RequestField.Update({ value: field.value }, `(id = '${field.id}' OR name = '${field.name}') AND request = '${params.id}'`));
+        }
 
         resp.status = 1;
         resp.msg = "Solicitação atualizada com sucesso!";
-        resp.data = { ...request, ...update.data, fields: [ ...body.fields, ] };
+        resp.data = { ...request, ...update.data };
         res.send(resp);
     });
 
