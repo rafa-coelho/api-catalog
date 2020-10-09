@@ -5,6 +5,7 @@ class Request extends Classes
     static fields = [ "id", "user", "offering", "summary", "status", "created_at", "updated_at" ];
 
     static Create(data){
+        data.status = 1;
         data._status = "created";
         data.created_at = new Date().toJSON();
         return Classes.Create.bind(this)(data);
