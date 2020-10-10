@@ -21,14 +21,13 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const obrigatorios = ["name", "fields"];
+        const obrigatorios = ["name", "fields", "type"];
 
         obrigatorios.forEach(campo => {
             req.assert(campo, `O campo '${campo}' é obrigatório!`).notEmpty();
         });
 
         resp.errors = req.validationErrors() || [];
-
         
         if (resp.errors.length > 0) {
             return res.status(400).send(resp);
@@ -44,11 +43,19 @@ module.exports = (app) => {
             }
         }
 
+        if(!["R", "P"].includes(body.type)){
+            resp.errors.push({
+                msg: "O campo 'type' precisa ter um valor entre 'R' e 'P'"
+            });
+            return res.status(400).send(resp);
+        }
+
         const data = {
             id: Util.generateId(),
             name: body.name,
             external_id: body.external_id,
             company: body.company,
+            type: body.type,
             fields: body.fields.map(field => {
                 const obrigatorios = ['name', 'label', 'type'];
 
