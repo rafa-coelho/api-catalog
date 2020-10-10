@@ -53,7 +53,7 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const obrigatorios = [ "name" ];
+        const obrigatorios = [ "name", "code" ];
 
         obrigatorios.forEach(campo => {
             req.assert(campo, `O campo '${campo}' é obrigatório!`).notEmpty();
@@ -76,7 +76,8 @@ module.exports = (app) => {
 
         const data = {
             id: Util.generateId(),
-            name: body.name
+            name: body.name,
+            code: body.code,
         };
 
         const create = await Company.Create(data);
