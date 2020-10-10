@@ -7,7 +7,6 @@ exports.up = async function (database, utf8 = false) {
                 table.string('id', 45).primary();
                 table.string('request', 45).notNullable();
                 table.string('name', 80).notNullable();
-                table.string('image', 80).notNullable();
                 table.string('type', 80).notNullable();
                 table.integer('deleted').defaultTo(0);
             });
