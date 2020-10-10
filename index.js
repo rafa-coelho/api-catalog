@@ -2,12 +2,22 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const expressValidator = require("express-validator");
+const bodyparser = require("body-parser");
+const fileUpload = require('express-fileupload');
+
 
 require('dotenv').config();
 
 app.use(express.json());
 app.use(cors());
 app.use(expressValidator());
+app.use(bodyparser.urlencoded({extended: true}));
+app.use(bodyparser.json());
+
+app.use(fileUpload({
+    createParentPath: true
+}));
+
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -18,6 +28,7 @@ app.use(function(req, res, next) {
 });
 
 global.PROD = process.env.NODE_ENV === 'prod';
+global.ROOT = __dirname;
 
 const consign = require('consign');
 
