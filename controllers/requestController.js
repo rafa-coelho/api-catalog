@@ -73,6 +73,7 @@ module.exports = (app) => {
             id: Util.generateId(),
             code: `${code}${count}`,
             user: session.data.user,
+            type: offering.type,
             ...body
         };
 
