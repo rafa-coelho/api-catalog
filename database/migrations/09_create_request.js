@@ -9,6 +9,7 @@ exports.up = async function (database, utf8 = false) {
                 table.string('analyst', 45);
                 table.string('code', 15).notNullable();
                 table.string('offering', 45).notNullable();
+                table.string('type').notNullable();
                 table.string('summary', 200);
                 table.string('status', 25);
 

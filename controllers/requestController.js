@@ -143,7 +143,7 @@ module.exports = (app) => {
         let limit = (query.limit) ? query.limit : '';
 
         if(user.company){
-            where = `${(where) ? `${where} AND` : ''} ${Request.table}.deleted = 0 ${(user.company) ? `AND ${Offering.table}.company = '${user.company}'` : ''}`;
+            where = `${(where) ? `${where} AND` : ''} ${Request.table}.deleted = 0 AND ${Request.table}.user = '${user.id}' ${(user.company) ? `AND ${Offering.table}.company = '${user.company}'` : ''}`;
             
             limit = (limit) ? limit : 1000000;
             let offset = 0;
@@ -207,7 +207,19 @@ module.exports = (app) => {
             return res.status(403).send(resp);
         }
 
-        const request = await Request.GetFirst(`user = '${session.data.user}' AND id = '${params.id}'`);
+        const user = await User.GetFirst(`id = '${session.data.user}'`);
+        
+        let where = `${Request.table}.id = '${params.id}'`;
+        let request = await Request.GetFirst(where);
+        
+        if(user.company){
+            where = `${(where) ? `${where} AND` : ''} ${Request.table}.deleted = 0 AND ${Request.table}.user = '${user.id}' ${(user.company) ? `AND ${Offering.table}.company = '${user.company}'` : ''}`;
+
+            request = (await db(Request.table)
+                .join(Offering.table, `${Offering.table}.id`, `${Request.table}.offering`)
+                .select(Request.fields.map(x => `${Request.table}.${x}`))
+                .whereRaw(where))[0];
+        }
 
         if (!request) {
             resp.errors.push({
