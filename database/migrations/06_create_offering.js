@@ -7,6 +7,7 @@ exports.up = async function (database, utf8 = false) {
                 table.string('id', 45).primary();
                 table.string('name', 50).notNullable();
                 table.string('company', 45);
+                table.string('type').notNullable();
                 table.string('external_id', 50);
                 table.integer('deleted').defaultTo(0);
             });
