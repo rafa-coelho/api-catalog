@@ -141,7 +141,7 @@ module.exports = (app) => {
             
         }
         
-        const userExists = await User.Get(`email = '${body.email}' OR username = '${body.username}'`);
+        const userExists = await User.Get(`email = '${body.email}'`);
 
         if(userExists.find(x => x.email == body.email)){
             resp.errors.push({
@@ -251,7 +251,6 @@ module.exports = (app) => {
         resp.msg = "Senha criada com sucesso!";
         res.send(resp);
     });
-
 
     // [GET] => /user/profile
     app.get(`/user/profile`, async (req, res) => {
