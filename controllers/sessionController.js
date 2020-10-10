@@ -8,7 +8,7 @@ module.exports = function(app){
         resp.data = null;
         resp.errors = [];
 
-        const session = await Session.Validar(req.headers['authorization'], 'post.user');
+        const session = await Session.Validar(req.headers['authorization'], 'get.user');
         
         if (!session.status) {
             resp.errors.push({
