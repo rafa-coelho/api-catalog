@@ -4,7 +4,7 @@ const cors = require('cors');
 const expressValidator = require("express-validator");
 const bodyparser = require("body-parser");
 const fileUpload = require('express-fileupload');
-
+const path = require('path');
 
 require('dotenv').config();
 
@@ -17,6 +17,8 @@ app.use(bodyparser.json());
 app.use(fileUpload({
     createParentPath: true
 }));
+
+app.use(`/media`, express.static(path.resolve(__dirname, 'media')));
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
